@@ -2,7 +2,7 @@ module.exports = function (grunt) {
 
 	var dirs = {
 		dist: "dist",
-		tests: "./tests"
+		tests: "tests"
 	}
 
 	var secrets  = require("./.secrets.js");
@@ -28,9 +28,8 @@ module.exports = function (grunt) {
 			},
 			test: {
 				command: [
-					"tsc --outFile "+dirs.tests+"/tests.js "+dirs.tests+"/tests.ts",
-					"mocha --colors "+dirs.tests+"/tests.js",
-					"rm -rf "+dirs.tests+"/tests.js"
+					"tsc --outDir "+dirs.dist,
+					"alsatian dist/tests/*.js"
 				].join(" && ")
 			}
 		},

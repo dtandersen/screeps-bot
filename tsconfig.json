@@ -2,11 +2,7 @@
   "compilerOptions": {
     "types": [
       "node",
-      "lodash",
-      "mocha",
-      "sinon",
-      "chai",
-      "chai-things"
+      "lodash"
     ],
     "target": "es5",
     "noResolve": false,
@@ -14,7 +10,8 @@
     "sourceMap": false,
     "module": "commonjs",
     "declaration": false,
-    "outDir": "dist"
+    "outDir": "dist",
+	"experimentalDecorators": true
   },
   "include": [
     "./src/**/*.ts",
