@@ -17,8 +17,8 @@
 	"./node_modules/screeps-typescript-declarations/dist/screeps.d.ts"
   ],
   "include": [
-    "./src/**/*.ts",
-    "./src/**/*.d.ts"
+    "./src/**/*",
+    "./test/**/*"
   ],
   "exclude": [
     "dist",
