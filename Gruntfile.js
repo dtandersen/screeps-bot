@@ -9,6 +9,7 @@ module.exports = function (grunt) {
 
 	grunt.loadNpmTasks("grunt-shell");
 	grunt.loadNpmTasks("grunt-screeps");
+	grunt.loadNpmTasks("grunt-contrib-clean");
 
 	grunt.initConfig({
 		shell: {
@@ -19,12 +20,8 @@ module.exports = function (grunt) {
 			},
 			tsc: {
 				command: [
-					"rm -rf "+dirs.dist,
 					"tsc --outDir "+dirs.dist
 					].join(" && ")
-			},
-			cleandist: {
-				command: "rm -rf "+dirs.dist+""
 			},
 			test: {
 				command: [
@@ -33,6 +30,7 @@ module.exports = function (grunt) {
 				].join(" && ")
 			}
 		},
+		clean: ['dist'],
 		screeps: {
 			options: {
 				email: secrets.email,
@@ -46,6 +44,6 @@ module.exports = function (grunt) {
 		}
 	});
 
-	grunt.registerTask("test", ["shell:test"]);
-	grunt.registerTask("default", ["shell:tsc", "screeps"]);
+	grunt.registerTask("test", ["clean", "shell:test"]);
+	grunt.registerTask("default", ["clean", "shell:tsc", "screeps"]);
 }

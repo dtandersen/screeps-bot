@@ -12,6 +12,7 @@
     "@types/node": "^7.0.8",
     "alsatian": "^2.0.0",
     "grunt": "^1.0.1",
+    "grunt-contrib-clean": "^1.1.0",
     "grunt-screeps": "^1.2.1",
     "grunt-shell": "^2.1.0"
   },
