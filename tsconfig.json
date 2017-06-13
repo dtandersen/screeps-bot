@@ -13,15 +13,9 @@
     "outDir": "dist",
 	"experimentalDecorators": true
   },
-  "files": [
-	"./node_modules/screeps-typescript-declarations/dist/screeps.d.ts"
-  ],
   "include": [
     "./src/**/*",
-    "./test/**/*"
-  ],
-  "exclude": [
-    "dist",
-	"node_modules"
+    "./test/**/*",
+    "node_modules/screeps-typescript-declarations/dist/screeps.d.ts"
   ]
 }

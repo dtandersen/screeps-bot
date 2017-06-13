@@ -1,13 +1,49 @@
-/*
- * Module code goes here. Use 'module.exports' to export things:
- * module.exports.thing = 'a thing';
- *
- * You can import it from another modules like this:
- * var mod = require('bot');
- * mod.thing == 'a thing'; // true
- */
+export interface Component {
 
-export class Bot {
+}
+
+export interface BaseBot {
+    addComponent(component: Component): void;
+
+    getComponent<T extends Component>(): T;
+
+    name() ;
+
+    memory(variable: string, value?: object) ;
+
+    propertyUndefined(variable) ;
+
+    clearMemory(variable) ;
+
+    carryingEnergy() ;
+
+    carryingMaxEnergy() ;
+
+    say(message) ;
+
+    moveToXY(x: number, y: number): number ;
+
+    moveTo(target) ;
+
+    clearBlocked() ;
+
+    blocked(value?: object) ;
+
+    incrementBlocked() ;
+    clearPath() ;
+
+    harvest(target) ;
+
+    transferEnergy(target) ;
+
+    findClosestByPath(type);
+
+    isNear(x: number, y: number, radius?: number): boolean;
+
+    deleteComponent(): void;
+}
+
+export class Bot implements BaseBot {
     creep: Creep;
 
     /**
@@ -20,6 +56,18 @@ export class Bot {
 
     name() {
         return this.creep.name;
+    }
+
+    addComponent(component: Component): void {
+        this.memory("component", component);
+    }
+
+    getComponent(): Component {
+        return this.memory("component");
+    }
+
+    deleteComponent(): void {
+        this.clearMemory("component");
     }
 
     /**
@@ -120,6 +168,17 @@ export class Bot {
             this.incrementBlocked();
             console.log(this.name() + " blocked: " + this.blocked());
         }
+    }
+
+    moveToXY(x: number, y: number): number {
+        return this.creep.moveTo(x, y);
+    }
+
+    isNear(x: number, y: number, radius = 0): boolean {
+        let dx = Math.abs(x - this.creep.pos.x);
+        let dy = Math.abs(y - this.creep.pos.y);
+
+        return dx <= radius && dy <= radius;
     }
 
     clearBlocked() {

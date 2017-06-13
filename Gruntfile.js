@@ -25,7 +25,7 @@ module.exports = function (grunt) {
 			test: {
 				command: [
 					"tsc --outDir "+dirs.dist,
-					"alsatian dist/test/*.js"
+					"alsatian --tap dist/test/*.js"
 				].join(" && ")
 			}
 		},
@@ -38,7 +38,7 @@ module.exports = function (grunt) {
 				ptr: false
 			},
 			dist: {
-				src: [dirs.dist + "/*.js"]
+				src: [dirs.dist + "/src/*.js"]
 			}
 		}
 	});
