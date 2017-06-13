@@ -1,7 +1,7 @@
 import {BotPosition} from "./entity.position";
 
 export class World {
-    private worldData: WorldData;
+    protected worldData: WorldData;
 
     constructor(worldData: WorldData) {
         this.worldData = worldData;
@@ -14,6 +14,7 @@ export class World {
 
 export interface WorldData {
     getSpawnPosition(): BotPosition;
+    setSpawnPosition(position: BotPosition): void;
 }
 
 interface WorldRepository {
@@ -37,5 +38,9 @@ class ScreepsWorldData implements WorldData {
         let pos = this.game.spawns["Spawn1"].pos;
 
         return new BotPosition(pos.x, pos.y);
+    }
+
+    setSpawnPosition(position: BotPosition): void {
+      throw new Error("Method not implemented.");
     }
 }
