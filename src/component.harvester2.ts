@@ -20,7 +20,10 @@ export class Harvester2 implements ScreepsController
 
         if (harv.state==="pickup")
         {
-          bot.harvest({pos:{x:4, y:4, roomName:""}});
+          // console.log("process spawn=" + JSON.stringify(spawn));
+          bot.harvest({pos:{x:spawn.pos.x, y:spawn.pos.y, roomName:""}});
+          bot.deleteComponent(MoveComponent);
+          return;
         }
 
         if (bot.isNear(spawn.pos.x, spawn.pos.y, 1))
