@@ -1,8 +1,9 @@
 import {BotPosition} from "./entity.position";
+import {deprecate} from "util";
 
 export class UberBot
 {
-    botData: BotData;
+    protected botData: BotData;
 
     /**
      *
@@ -45,7 +46,7 @@ export class UberBot
      * @param value
      * @returns {*}
      */
-    memory(variable: string, value?: object)
+    memory<T>(variable: string, value?: T): T
     {
         return this.botData.memory(variable, value);
     }
@@ -63,16 +64,16 @@ export class UberBot
     /**
      * @returns {int}
      */
-    carryingEnergy()
+    carryingEnergy(): number
     {
-        return this.botData.getCarriedEnergy();
+        return this.botData.carryingEnergy();
     }
 
     /**
      *
      * @returns {boolean}
      */
-    carryingMaxEnergy()
+    carryingMaxEnergy(): boolean
     {
         return this.carryingEnergy() === this.botData.getCarryCapacity();
     }
@@ -81,7 +82,7 @@ export class UberBot
      *
      * @param {string} message
      */
-    say(message)
+    say(message: string): void
     {
         this.botData.say(message);
     }
@@ -90,15 +91,11 @@ export class UberBot
      *
      * @param {RoomPosition} target
      */
-    moveTo(target)
+    moveTo(target): void
     {
         let creep = this.botData;
 
-        // if (this.propertyUndefined("lastPos")) {
-        //     this.memory("lastPos", botData.pos);
-        // }
-
-        let lastPos = this.memory("lastPos");
+        let lastPos = <BotPosition>this.memory("lastPos");
 
         let repath = false;
         let blocked = false;
@@ -128,7 +125,7 @@ export class UberBot
             creep.memory("path", creep.findPathTo(target));
         }
 
-        let result = creep.moveByPath(creep.memory("path"));
+        let result = creep.moveByPath(<object[]>creep.memory("path"));
         creep.memory("lastPos", creep.getPosition());
 
         if (result < 0)
@@ -163,12 +160,20 @@ export class UberBot
         return dx <= radius && dy <= radius;
     }
 
+    /**
+     * @deprecated Move to MovementSystem
+     *
+     */
     clearBlocked()
     {
         this.clearMemory("blocked");
     }
 
-    blocked(value?: object)
+    /**
+     * @deprecated Move to MovementSystem
+     *
+     */
+    blocked(value?: number): number
     {
         if (typeof value !== "undefined")
         {
@@ -180,14 +185,22 @@ export class UberBot
             return 0;
         }
 
-        return this.memory("blocked");
+        return this.memory<number>("blocked");
     }
 
+    /**
+     * @deprecated Move to MovementSystem
+     *
+     */
     incrementBlocked()
     {
         this.blocked(this.blocked() + 1);
     }
 
+    /**
+     * @deprecated Move to MovementSystem
+     *
+     */
     clearPath()
     {
         this.clearMemory("path");
@@ -229,21 +242,21 @@ export interface Component
 
 export interface BotData
 {
-    name() ;
+    name(): string;
 
-    memory(variable: string, value?: object) ;
+    memory<T>(variable: string, value?: T): T;
 
-    carryingEnergy() ;
+    carryingEnergy(): number;
 
-    carryingMaxEnergy() ;
+    carryingMaxEnergy(): boolean;
 
-    say(message: string): void ;
+    say(message: string): void;
 
-    moveToXY(x: number, y: number): number ;
+    moveToXY(x: number, y: number): number;
 
-    moveTo(target) ;
+    moveTo(target): number;
 
-    harvest(target) ;
+    harvest(target): number;
 
     transferEnergy(target: MyRoomObject): number;
 
@@ -258,8 +271,6 @@ export interface BotData
     getCarryCapacity(): number;
 
     findPathTo(target: BotPosition): object[];
-
-    getCarriedEnergy(): number;
 
     clearMemory(variable: string): void;
 }
@@ -278,9 +289,9 @@ export class ScreepsBot implements BotData
         return this.creep.name;
     }
 
-    getCarry()
+    getCarryCapacity(): number
     {
-        return this.creep.carry;
+        return this.creep.carryCapacity;
     }
 
     getPosition(): BotPosition
@@ -296,11 +307,6 @@ export class ScreepsBot implements BotData
     moveByPath(path: string | MyPath[]): number
     {
         return this.creep.moveByPath(path);
-    }
-
-    getCarryCapacity(): number
-    {
-        return this.creep.carryCapacity;
     }
 
     findPathTo(target: BotPosition): object[]
@@ -333,7 +339,7 @@ export class ScreepsBot implements BotData
     /**
      * @returns {int}
      */
-    carryingEnergy()
+    carryingEnergy(): number
     {
         return this.creep.carry.energy;
     }
@@ -342,7 +348,7 @@ export class ScreepsBot implements BotData
      *
      * @returns {boolean}
      */
-    carryingMaxEnergy()
+    carryingMaxEnergy(): boolean
     {
         return this.carryingEnergy() === this.creep.carryCapacity;
     }

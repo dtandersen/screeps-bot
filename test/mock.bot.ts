@@ -30,7 +30,7 @@ export class MockBot implements BotData
     private position: BotPosition;
     [memory: string]: Object;
 
-    name()
+    name(): string
     {
         throw new Error("Method not implemented.");
     }
@@ -50,17 +50,17 @@ export class MockBot implements BotData
         throw new Error("Method not implemented.");
     }
 
+    carryingEnergy(): number
+    {
+        throw new Error("Method not implemented.");
+    }
+
     getCarryCapacity(): number
     {
         throw new Error("Method not implemented.");
     }
 
     findPathTo(target: BotPosition): object[]
-    {
-        throw new Error("Method not implemented.");
-    }
-
-    getCarriedEnergy(): number
     {
         throw new Error("Method not implemented.");
     }
@@ -81,12 +81,7 @@ export class MockBot implements BotData
         delete this.memory[variable];
     }
 
-    carryingEnergy()
-    {
-        throw new Error("Method not implemented.");
-    }
-
-    carryingMaxEnergy()
+    carryingMaxEnergy(): boolean
     {
         throw new Error("Method not implemented.");
     }
@@ -96,7 +91,7 @@ export class MockBot implements BotData
         throw new Error("Method not implemented.");
     }
 
-    moveTo(target: any)
+    moveTo(target: any): number
     {
         throw new Error("Method not implemented.");
     }
@@ -116,7 +111,7 @@ export class MockBot implements BotData
         return dx <= radius && dy <= radius;
     }
 
-    harvest(target: any)
+    harvest(target: any): number
     {
         throw new Error("Method not implemented.");
     }
