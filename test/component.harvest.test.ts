@@ -1,6 +1,6 @@
 import {Expect, Test, TestCase, Setup} from "alsatian";
 import {MockBot, MockUberBot} from "./mock.bot";
-import {MockWorld} from "./mock.world";
+import {MockWorld, MyStuff} from "./mock.world";
 import {World} from "../src/entity.world";
 import {Harvester2, HarvesterComponent} from "../src/component.harvester2";
 import {MoveComponent} from "../src/component.move";
@@ -21,67 +21,85 @@ export class ComponentHarvestTest
         this.bot = new MockUberBot(new MockBot());
     }
 
+    @TestCase({
+      spawns: {"Spawn1": {pos:{x: 5, y: 5}}},
+      sources: [ {x: 7, y: 7}],
+      creep: { Fred: {x:1, y: 1}}
+    })
     @Test("move to spawn")
-    public test1()
+    public test1(env:MyStuff)
     {
-        this.givenSpawnAt(5, 5);
+      this.givenEnv(env);
+        // this.givenSpawnAt(5, 5);
         this.givenCreepAt(1, 1);
-        this.bot.addComponent(HarvesterComponent, new HarvesterComponent());
+        this.bot.addComponent(HarvesterComponent, {spawn: "Spawn1"});
 
         this.harvester.process(this.bot);
 
         Expect(this.bot.getComponent(MoveComponent)).toEqual(new MoveComponent(5, 5));
     }
 
+    @TestCase({
+      spawns: {"Spawn1": {pos:{x: 6, y: 6}}},
+      sources: [ {x: 7, y: 7}],
+      creep: { Fred: {x:1, y: 1}}
+    })
     @Test("move to another spawn")
-    public test2()
+    public test2(env:MyStuff)
     {
-        this.givenSpawnAt(6, 6);
+      this.givenEnv(env);
+        // this.givenSpawnAt(6, 6);
         this.givenCreepAt(1, 1);
-        this.bot.addComponent(HarvesterComponent, new HarvesterComponent());
-        Expect(this.bot.getComponent(HarvesterComponent)).toEqual({});
+        this.bot.addComponent(HarvesterComponent, {spawn: "Spawn1"});
+        Expect(this.bot.getComponent(HarvesterComponent)).toEqual({spawn: "Spawn1"});
 
         this.harvester.process(this.bot);
 
         Expect(this.bot.getComponent(MoveComponent)).toEqual(new MoveComponent(6, 6));
-        Expect(this.bot.getComponent(HarvesterComponent)).toEqual({});
+        Expect(this.bot.getComponent(HarvesterComponent)).toEqual({spawn: "Spawn1"});
     }
 
     @TestCase({
-      spawns: {"Spawn1": {x: 4, y: 4}},
+      spawns: {"Spawn1": {pos:{x: 4, y: 4}}},
       sources: [ {x: 7, y: 7}],
       creep: { Fred: {x:3, y: 3}}
     })
     @TestCase({
-      spawns: {"Spawn1": {x: 5, y: 5}},
+      spawns: {"Spawn1": {pos:{x: 5, y: 5}}},
       sources: [ {x: 1, y: 1}],
       creep: { Fred: {x:4, y: 4}}
     })
     @Test("harvest from source")
-    public harvest(env)
+    public harvest(env:MyStuff)
     {
         this.givenEnv(env);
         let spawn = env.spawns["Spawn1"];
-        this.givenSpawns(env.spawns);
+        // this.givenSpawns(env.spawns);
         this.givenCreepAt(env.creep.x, env.creep.y);
         this.bot.addComponent(MoveComponent, {x:spawn.x, y:spawn.y});
-        this.bot.addComponent(HarvesterComponent, {state: "pickup"});
+        this.bot.addComponent(HarvesterComponent, {spawn: "Spawn1", state: "pickup"});
         // console.log("spawn b=" + JSON.stringify(spawn));
 
         this.harvester.process(this.bot);
 
         // console.log("spawn a=" + JSON.stringify(spawn));
         Expect(this.bot.getComponent(MoveComponent)).not.toBeDefined();
-        Expect(this.bot.harvestAt).toEqual({pos: {x: spawn.x, y: spawn.y, roomName: ""}});
+        Expect(this.bot.harvestAt).toEqual({pos: {x: spawn.pos.x, y: spawn.pos.y, roomName: ""}});
     }
 
+    @TestCase({
+      spawns: {"Spawn1": {pos:{x: 4, y: 4, roomName: ""}}},
+      sources: [ {x: 7, y: 7}],
+      creep: { Fred: {x:3, y: 3}}
+    })
     @Test("transfer to spawn")
-    public test3()
+    public test3(env:MyStuff)
     {
-        this.givenSpawnAt(4, 4);
+      this.givenEnv(env);
+        // this.givenSpawnAt(4, 4);
         this.givenCreepAt(3, 3);
         this.bot.addComponent(MoveComponent, {x:3, y:3});
-        this.bot.addComponent(HarvesterComponent, {state: "deliver"});
+        this.bot.addComponent(HarvesterComponent, {spawn: "Spawn1", state: "deliver"});
 
         this.harvester.process(this.bot);
 

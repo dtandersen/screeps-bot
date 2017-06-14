@@ -11,6 +11,10 @@ export class World {
     getSpawnPosition(): MyRoomObject {
         return this.worldData.getSpawn();
     }
+
+    getSpawn(name:string ): MyRoomObject {
+        return this.worldData.getSpawnByName(name);
+    }
 }
 
 
@@ -26,6 +30,7 @@ class ScreepsWorldRepository implements WorldRepository {
 
 export interface WorldData {
     getSpawn(): MyRoomObject;
+    getSpawnByName(name: string): MyRoomObject;
     setSpawn(spawn: MyRoomObject): void;
 }
 
@@ -36,8 +41,17 @@ class ScreepsWorldData implements WorldData {
         this.game = game;
     }
 
+    /**
+     * @deprecated use getSpawnByName
+     */
     getSpawn(): MyRoomObject {
         let spawn = this.game.spawns["Spawn1"];
+
+        return spawn;
+    }
+
+    getSpawnByName(name: string): MyRoomObject {
+        let spawn = this.game.spawns[name];
 
         return spawn;
     }

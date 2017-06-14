@@ -9,6 +9,9 @@ export class MockWorld extends World
         super(new WorldDataStub());
     }
 
+    /**
+     * @deprecated
+     **/
     addSpawn(x: number, y: number): void
     {
         // console.log("add spawn " + x + ", " + y);
@@ -23,19 +26,33 @@ export class MockWorld extends World
 export class WorldDataStub implements WorldData
 {
     spawn: MyRoomObject;
-    env: object;
+    env: MyStuff;
 
-    constructor(env?){
+    constructor(env?: MyStuff){
       this.env=env;
     }
 
+    /**
+     * @deprecated
+     **/
     getSpawn(): MyRoomObject
     {
         return this.spawn;
+    }
+
+    getSpawnByName(name: string): MyRoomObject
+    {
+        return this.env.spawns[name];
     }
 
     setSpawn(spawn: MyRoomObject): void
     {
         this.spawn = spawn;
     }
+}
+
+export interface MyStuff
+{
+    spawns: MyRoomObject[];
+    creep: BotPosition;
 }
