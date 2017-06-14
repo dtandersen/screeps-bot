@@ -1,24 +1,31 @@
 import {World, WorldData} from "../src/entity.world";
 import {BotPosition} from "../src/entity.position";
+import {MyRoomObject} from "../src/entity.bot";
 
-export class WorldDataStub implements WorldData {
-  spawnPosition: BotPosition;
+export class WorldDataStub implements WorldData
+{
+    spawn: MyRoomObject;
 
-  getSpawnPosition(): BotPosition {
-      return this.spawnPosition;
-  }
+    getSpawn(): MyRoomObject
+    {
+        return this.spawn;
+    }
 
-  setSpawnPosition(position: BotPosition): void {
-    this.spawnPosition = position;
-  }
+    setSpawn(spawn: MyRoomObject): void
+    {
+        this.spawn = spawn;
+    }
 }
 
-export class MockWorld extends World {
-  constructor() {
-    super(new WorldDataStub());
-  }
+export class MockWorld extends World
+{
+    constructor()
+    {
+        super(new WorldDataStub());
+    }
 
-  addSpawn(x: number, y: number): void {
-    this.worldData.setSpawnPosition(new BotPosition(x, y));
-  }
+    addSpawn(x: number, y: number): void
+    {
+        this.worldData.setSpawn({pos: {x: x, y: y, roomName: ""}});
+    }
 }

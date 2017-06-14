@@ -24,7 +24,7 @@ export class MoveTest {
         m.process(bot);
 
         Expect(bot.movingTo).not.toBeDefined();
-        Expect(bot.getComponent<MoveComponent>()).not.toBeDefined();
+        Expect(bot.getComponent<MoveComponent>("MoveComponent")).not.toBeDefined();
     }
 
     @Test("stop near target")
@@ -36,6 +36,6 @@ export class MoveTest {
         m.process(bot);
 
         Expect(bot.movingTo).not.toBeDefined();
-        Expect(bot.getComponent<MoveComponent>()).not.toBeDefined();
+        Expect(bot.getComponent<MoveComponent>("MoveComponent")).not.toBeDefined();
     }
 }

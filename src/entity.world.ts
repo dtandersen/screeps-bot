@@ -1,4 +1,5 @@
 import {BotPosition} from "./entity.position";
+import {MyRoomObject} from "./entity.bot";
 
 export class World {
     protected worldData: WorldData;
@@ -7,15 +8,11 @@ export class World {
         this.worldData = worldData;
     }
 
-    getSpawnPosition(): BotPosition {
-        return this.worldData.getSpawnPosition();
+    getSpawnPosition(): MyRoomObject {
+        return this.worldData.getSpawn();
     }
 }
 
-export interface WorldData {
-    getSpawnPosition(): BotPosition;
-    setSpawnPosition(position: BotPosition): void;
-}
 
 interface WorldRepository {
     getWorld(): World;
@@ -27,6 +24,11 @@ class ScreepsWorldRepository implements WorldRepository {
     }
 }
 
+export interface WorldData {
+    getSpawn(): MyRoomObject;
+    setSpawn(spawn: MyRoomObject): void;
+}
+
 class ScreepsWorldData implements WorldData {
     private game: Game;
 
@@ -34,13 +36,13 @@ class ScreepsWorldData implements WorldData {
         this.game = game;
     }
 
-    getSpawnPosition(): BotPosition {
-        let pos = this.game.spawns["Spawn1"].pos;
+    getSpawn(): MyRoomObject {
+        let spawn = this.game.spawns["Spawn1"];
 
-        return new BotPosition(pos.x, pos.y);
+        return spawn;
     }
 
-    setSpawnPosition(position: BotPosition): void {
+    setSpawn(position: MyRoomObject): void {
       throw new Error("Method not implemented.");
     }
 }

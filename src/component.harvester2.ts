@@ -3,17 +3,30 @@ import {BaseBot, Component} from "./entity.bot";
 import {MoveComponent} from "./component.move";
 import {World} from "./entity.world";
 
-export class Harvester2 implements ScreepsController {
-  private world: World;
+export class Harvester2 implements ScreepsController
+{
+    private world: World;
 
-  constructor(world: World) {
-    this.world = world;
-  }
-    process(bot: BaseBot): void {
-      let spawnPos = this.world.getSpawnPosition();
-      bot.addComponent(new MoveComponent(spawnPos.x, spawnPos.y));
+    constructor(world: World)
+    {
+        this.world = world;
+    }
+
+    process(bot: BaseBot): void
+    {
+        let spawn = this.world.getSpawnPosition();
+        if (bot.isNear(spawn.pos.x, spawn.pos.y, 1))
+        {
+            bot.deleteComponent("MoveComponent");
+            bot.transferEnergy(spawn);
+        }
+        else
+        {
+            bot.addComponent(new MoveComponent(spawn.pos.x, spawn.pos.y));
+        }
     }
 }
 
-export class HarvesterComponent implements Component {
+export class HarvesterComponent implements Component
+{
 }
