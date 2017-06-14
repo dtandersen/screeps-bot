@@ -11,7 +11,7 @@ export class MoveTest
         let m = new Move();
         let bot = new MockUberBot(new MockBot());
         bot.setPosition(new BotPosition(0, 0));
-        bot.addComponent(new MoveComponent(2, 2));
+        bot.addComponent(MoveComponent, new MoveComponent(2, 2));
         m.process(bot);
 
         Expect(bot.movingTo).toEqual(new BotPosition(2, 2));
@@ -23,11 +23,11 @@ export class MoveTest
         let m = new Move();
         let bot = new MockUberBot(new MockBot());
         bot.setPosition(new BotPosition(1, 1));
-        bot.addComponent(new MoveComponent(1, 1));
+        bot.addComponent(MoveComponent, new MoveComponent(1, 1));
         m.process(bot);
 
         Expect(bot.movingTo).not.toBeDefined();
-        Expect(bot.getComponent<MoveComponent>("MoveComponent")).not.toBeDefined();
+        Expect(bot.getComponent(MoveComponent)).not.toBeDefined();
     }
 
     @Test("stop near target")
@@ -36,10 +36,10 @@ export class MoveTest
         let m = new Move();
         let bot = new MockUberBot(new MockBot());
         bot.setPosition(new BotPosition(2, 2));
-        bot.addComponent(new MoveComponent(3, 3));
+        bot.addComponent(MoveComponent, {x:3, y:3});
         m.process(bot);
 
         Expect(bot.movingTo).not.toBeDefined();
-        Expect(bot.getComponent<MoveComponent>("MoveComponent")).not.toBeDefined();
+        Expect(bot.getComponent(MoveComponent)).not.toBeDefined();
     }
 }

@@ -5,10 +5,6 @@ export class UberBot
 {
     protected botData: BotData;
 
-    /**
-     *
-     * @param {Creep} botData
-     */
     constructor(botData: BotData)
     {
         this.botData = botData;
@@ -16,29 +12,50 @@ export class UberBot
 
     name()
     {
-        return this.botData.name;
+        return this.botData.name();
     }
 
-    addComponent<T extends Component>(component: T): void
+    addComponent<T extends Component>(t: new()=> T, component: T): void
     {
-        if (typeof this.memory["components"] === "undefined")
+      // console.log("begin addComponent");
+        let name = t["name"];
+        //  console.log("name=" + name);
+        //  console.log("component=" + JSON.stringify(component));
+        if (name === "Object") {
+          throw new Error("Component may not be Object: " + JSON.stringify(component));
+        }
+
+        if (typeof this.memory("components") === "undefined")
         {
             this.memory("components", {});
         }
 
-        let components = this.memory("components");
-        console.log(component.constructor["name"]);
-        components[component.constructor["name"]] = component;
+        let components = this.memory<Component[]>("components");
+        components[name] = component;
+        // console.log("add " + name + "=" + JSON.stringify(component));
+        // console.log("components=" + JSON.stringify(components));
+        this.memory("components", components);
+        // console.log("end addComponent");
     }
 
-    getComponent<T extends Component>(name: string): T
+    getComponent<T extends Component>(t: new()=>T): T
     {
-        return <T>this.memory("components")[name];
+      // console.log("begin getComponent");
+        let components = <Component[]>this.memory("components");
+        let component = <T>components[t["name"]];
+        // console.log("get component " + name + "=" + JSON.stringify(component));
+        // console.log("end getComponent");
+        return component;
     }
 
-    deleteComponent(name: string): void
+    deleteComponent<T extends Component>(t: new()=>T)
     {
+      let name = t["name"];
+      // console.log("begin deleteComponent");
+        // console.log("delete component " + name);
         delete this.memory("components")[name];
+        // console.log("components=" + JSON.stringify(this.memory("components")));
+        // console.log("end deleteComponent");
     }
 
     /**

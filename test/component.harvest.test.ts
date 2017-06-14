@@ -26,11 +26,11 @@ export class ComponentHarvestTest
     {
         this.givenSpawnAt(5, 5);
         this.givenCreepAt(1, 1);
-        this.bot.addComponent(new HarvesterComponent());
+        this.bot.addComponent(HarvesterComponent, new HarvesterComponent());
 
         this.harvester.process(this.bot);
 
-        Expect(this.bot.getComponent<MoveComponent>("MoveComponent")).toEqual(new MoveComponent(5, 5));
+        Expect(this.bot.getComponent(MoveComponent)).toEqual(new MoveComponent(5, 5));
     }
 
     @Test("move to another spawn")
@@ -38,11 +38,27 @@ export class ComponentHarvestTest
     {
         this.givenSpawnAt(6, 6);
         this.givenCreepAt(1, 1);
-        this.bot.addComponent(new HarvesterComponent());
+        this.bot.addComponent(HarvesterComponent, new HarvesterComponent());
+        Expect(this.bot.getComponent(HarvesterComponent)).toEqual({});
 
         this.harvester.process(this.bot);
 
-        Expect(this.bot.getComponent<MoveComponent>("MoveComponent")).toEqual(new MoveComponent(6, 6));
+        Expect(this.bot.getComponent(MoveComponent)).toEqual(new MoveComponent(6, 6));
+        Expect(this.bot.getComponent(HarvesterComponent)).toEqual({});
+    }
+
+    @Test("harvest from source")
+    public harvest()
+    {
+        this.givenSpawnAt(4, 4);
+        this.givenCreepAt(3, 3);
+        this.bot.addComponent(MoveComponent, {x:3, y:3});
+        this.bot.addComponent(HarvesterComponent, {state: "pickup"});
+
+        this.harvester.process(this.bot);
+
+        Expect(this.bot.getComponent(MoveComponent)).not.toBeDefined();
+        Expect(this.bot.harvestAt).toEqual({pos: {x: 4, y: 4, roomName: ""}});
     }
 
     @Test("transfer to spawn")
@@ -50,29 +66,15 @@ export class ComponentHarvestTest
     {
         this.givenSpawnAt(4, 4);
         this.givenCreepAt(3, 3);
-        this.bot.addComponent(<MoveComponent>{x: 3, y: 3});
-        this.bot.addComponent(new HarvesterComponent());
+        this.bot.addComponent(MoveComponent, {x:3, y:3});
+        this.bot.addComponent(HarvesterComponent, {state: "deliver"});
 
         this.harvester.process(this.bot);
 
-        Expect(this.bot.getComponent<MoveComponent>("MoveComponent")).not.toBeDefined();
+        Expect(this.bot.getComponent(MoveComponent)).not.toBeDefined();
         Expect(this.bot.transferAt).toEqual({pos: {x: 4, y: 4, roomName: ""}});
     }
 
-    // @Test("harvest from source")
-    // @testi
-    public harvest()
-    {
-        this.givenSpawnAt(4, 4);
-        this.givenCreepAt(3, 3);
-        this.bot.addComponent({x: 3, y: 3});
-        this.bot.addComponent(new HarvesterComponent());
-
-        this.harvester.process(this.bot);
-
-        Expect(this.bot.getComponent<MoveComponent>("MoveComponent")).not.toBeDefined();
-        Expect(this.bot.harvestAt).toEqual({pos: {x: 4, y: 4, roomName: ""}});
-    }
 
     private givenCreepAt(x: number, y: number)
     {

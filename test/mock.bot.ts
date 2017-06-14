@@ -23,6 +23,12 @@ export class MockUberBot extends UberBot
         this.movingTo = new BotPosition(x, y);
         return this.botData.moveToXY(x, y);
     }
+
+    harvest(target: BotPosition): number
+    {
+        this.harvestAt=target;
+        return super.harvest(target);
+    }
 }
 
 export class MockBot implements BotData
@@ -69,10 +75,12 @@ export class MockBot implements BotData
     {
         if (typeof value !== "undefined")
         {
+            // console.log("set memory " + variable + "=" + JSON.stringify(value));
             this.memory[variable] = value;
             return;
         }
 
+        // console.log("get memory " + variable + "=" + JSON.stringify(this.memory[variable]));
         return this.memory[variable];
     }
 
@@ -113,7 +121,7 @@ export class MockBot implements BotData
 
     harvest(target: any): number
     {
-        throw new Error("Method not implemented.");
+        return 0;
     }
 
     transferEnergy(target: RoomObject): number

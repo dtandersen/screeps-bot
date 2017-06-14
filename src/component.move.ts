@@ -5,10 +5,10 @@ export class Move implements ScreepsController
 {
     process(bot: UberBot)
     {
-        let moveComponent = bot.getComponent<MoveComponent>("MoveComponent");
+        let moveComponent = bot.getComponent(MoveComponent);
         if (bot.isNear(moveComponent.x, moveComponent.y, 1))
         {
-            bot.deleteComponent("MoveComponent");
+            bot.deleteComponent(MoveComponent);
         }
         else
         {
@@ -18,7 +18,7 @@ export class Move implements ScreepsController
 
     matches(bot: UberBot): boolean
     {
-        return typeof bot.getComponent<MoveComponent>("MoveComponent") !== "undefined";
+        return typeof bot.getComponent(MoveComponent) !== "undefined";
     }
 }
 
@@ -27,7 +27,7 @@ export class MoveComponent implements Component
     public x: number;
     public y: number;
 
-    constructor(x: number, y: number)
+    constructor(x?: number, y?: number)
     {
         this.x = x;
         this.y = y;
