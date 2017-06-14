@@ -8,7 +8,7 @@ export class Harvester {
 
     /**
      *
-     * @param {Bot} bot
+     * @param {ScreepsBot} bot
      */
     process(bot) {
         if (bot.propertyUndefined("working")) {
@@ -19,13 +19,13 @@ export class Harvester {
             // switch state
             bot.memory("working", false);
         }
-        // if creep is harvesting carryingEnergy but is full
+        // if botData is harvesting carryingEnergy but is full
         else if (!Harvester.working(bot) && bot.carryingMaxEnergy()) {
             // switch state
             bot.memory("working", true);
         }
 
-        // if creep is supposed to transferEnergy carryingEnergy to the spawn
+        // if botData is supposed to transferEnergy carryingEnergy to the spawn
         if (bot.memory("working") === true) {
             // try to transferEnergy carryingEnergy, if the spawn is not in range
             let spawn = Game.spawns["Spawn1"];
@@ -38,7 +38,7 @@ export class Harvester {
                 bot.clearPath();
             }
         }
-        // if creep is supposed to harvest carryingEnergy from source
+        // if botData is supposed to harvest carryingEnergy from source
         else {
             // find closest source
             let source = bot.findClosestByPath(FIND_SOURCES);
@@ -56,7 +56,7 @@ export class Harvester {
 
     /**
      *
-     * @param {Bot} bot
+     * @param {ScreepsBot} bot
      * @returns {*}
      */
     static working(bot) {

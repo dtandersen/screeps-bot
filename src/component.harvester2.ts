@@ -1,5 +1,5 @@
 import {ScreepsController} from "./controller.screeps";
-import {BaseBot, Component} from "./entity.bot";
+import {BotData, Component, UberBot} from "./entity.bot";
 import {MoveComponent} from "./component.move";
 import {World} from "./entity.world";
 
@@ -12,7 +12,7 @@ export class Harvester2 implements ScreepsController
         this.world = world;
     }
 
-    process(bot: BaseBot): void
+    process(bot: UberBot): void
     {
         let spawn = this.world.getSpawnPosition();
         if (bot.isNear(spawn.pos.x, spawn.pos.y, 1))

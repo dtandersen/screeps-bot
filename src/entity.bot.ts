@@ -1,113 +1,63 @@
 import {BotPosition} from "./entity.position";
-export interface Component
+
+export class UberBot
 {
-
-}
-
-export interface BaseBot
-{
-    addComponent<T extends Component>(component: T): void;
-
-    getComponent<T extends Component>(name: string): T;
-
-    deleteComponent(name: string): void;
-
-    name() ;
-
-    memory(variable: string, value?: object) ;
-
-    propertyUndefined(variable) ;
-
-    clearMemory(variable) ;
-
-    carryingEnergy() ;
-
-    carryingMaxEnergy() ;
-
-    say(message) ;
-
-    moveToXY(x: number, y: number): number ;
-
-    moveTo(target) ;
-
-    clearBlocked() ;
-
-    blocked(value?: object) ;
-
-    incrementBlocked() ;
-
-    clearPath() ;
-
-    harvest(target) ;
-
-    transferEnergy(target: MyRoomObject): number;
-
-    findClosestByPath(type);
-
-    isNear(x: number, y: number, radius?: number): boolean;
-}
-
-export class Bot implements BaseBot
-{
-    creep: Creep;
+    botData: BotData;
 
     /**
      *
-     * @param {Creep} creep
+     * @param {Creep} botData
      */
-    constructor(creep: Creep)
+    constructor(botData: BotData)
     {
-        this.creep = creep;
+        this.botData = botData;
     }
 
     name()
     {
-        return this.creep.name;
+        return this.botData.name;
     }
 
     addComponent<T extends Component>(component: T): void
     {
-        this.memory("component", component);
+        if (typeof this.memory["components"] === "undefined")
+        {
+            this.memory("components", {});
+        }
+
+        let components = this.memory("components");
+        console.log(component.constructor["name"]);
+        components[component.constructor["name"]] = component;
     }
 
-    getComponent(): Component
+    getComponent<T extends Component>(name: string): T
     {
-        return this.memory("component");
+        return <T>this.memory("components")[name];
     }
 
-    deleteComponent(): void
+    deleteComponent(name: string): void
     {
-        this.clearMemory("component");
+        delete this.memory("components")[name];
     }
 
     /**
-     *
      * @param {string} variable
      * @param value
      * @returns {*}
      */
     memory(variable: string, value?: object)
     {
-        if (typeof value !== "undefined")
-        {
-            // console.log(this.name() + ": set " + variable + "=" + value);
-            this.creep.memory[variable] = value;
-            return value;
-        }
-
-        // console.log(this.name() + ": get " + variable + "=" + this.creep.memory[variable]);
-
-        return this.creep.memory[variable];
+        return this.botData.memory(variable, value);
     }
 
-    propertyUndefined(variable)
+    propertyUndefined(variable: string): boolean
     {
-        return !this.creep.memory.hasOwnProperty(variable);
+        return typeof this.botData.memory(variable) === "undefined";
     }
 
-    clearMemory(variable)
+    clearMemory(variable: string): void
     {
-        delete this.creep.memory[variable];
+        this.botData.clearMemory(variable);
     }
 
     /**
@@ -115,7 +65,7 @@ export class Bot implements BaseBot
      */
     carryingEnergy()
     {
-        return this.creep.carry.energy;
+        return this.botData.getCarriedEnergy();
     }
 
     /**
@@ -124,7 +74,7 @@ export class Bot implements BaseBot
      */
     carryingMaxEnergy()
     {
-        return this.carryingEnergy() === this.creep.carryCapacity;
+        return this.carryingEnergy() === this.botData.getCarryCapacity();
     }
 
     /**
@@ -133,7 +83,7 @@ export class Bot implements BaseBot
      */
     say(message)
     {
-        this.creep.say(message);
+        this.botData.say(message);
     }
 
     /**
@@ -142,17 +92,17 @@ export class Bot implements BaseBot
      */
     moveTo(target)
     {
-        let creep = this.creep;
+        let creep = this.botData;
 
         // if (this.propertyUndefined("lastPos")) {
-        //     this.memory("lastPos", creep.pos);
+        //     this.memory("lastPos", botData.pos);
         // }
 
         let lastPos = this.memory("lastPos");
 
         let repath = false;
         let blocked = false;
-        if (typeof lastPos === "object" && (creep.pos.x === lastPos.x && creep.pos.y === lastPos.y))
+        if (typeof lastPos === "object" && (creep.getPosition().x === lastPos.x && creep.getPosition().y === lastPos.y))
         {
             blocked = true;
             // console.log(this.name() + " blocked: " + this.blocked());
@@ -175,11 +125,11 @@ export class Bot implements BaseBot
         {
             console.log(this.name() + " repathing");
             this.clearBlocked();
-            creep.memory.path = creep.pos.findPathTo(target);
+            creep.memory("path", creep.findPathTo(target));
         }
 
-        let result = creep.moveByPath(creep.memory.path);
-        creep.memory.lastPos = creep.pos;
+        let result = creep.moveByPath(creep.memory("path"));
+        creep.memory("lastPos", creep.getPosition());
 
         if (result < 0)
         {
@@ -202,13 +152,13 @@ export class Bot implements BaseBot
 
     moveToXY(x: number, y: number): number
     {
-        return this.creep.moveTo(x, y);
+        return this.botData.moveToXY(x, y);
     }
 
     isNear(x: number, y: number, radius = 0): boolean
     {
-        let dx = Math.abs(x - this.creep.pos.x);
-        let dy = Math.abs(y - this.creep.pos.y);
+        let dx = Math.abs(x - this.botData.getPosition().x);
+        let dy = Math.abs(y - this.botData.getPosition().y);
 
         return dx <= radius && dy <= radius;
     }
@@ -250,6 +200,179 @@ export class Bot implements BaseBot
      */
     harvest(target)
     {
+        return this.botData.harvest(target);
+    }
+
+    /**
+     *
+     * @param {Creep|Structure} target
+     * @returns {*}
+     */
+    transferEnergy(target: MyRoomObject): number
+    {
+        return this.botData.transferEnergy(target);
+    }
+
+    /**
+     * @param {number} type
+     * @returns {*}
+     */
+    findClosestByPath(type)
+    {
+        return this.botData.findClosestByPath(type);
+    }
+}
+
+export interface Component
+{
+}
+
+export interface BotData
+{
+    name() ;
+
+    memory(variable: string, value?: object) ;
+
+    carryingEnergy() ;
+
+    carryingMaxEnergy() ;
+
+    say(message: string): void ;
+
+    moveToXY(x: number, y: number): number ;
+
+    moveTo(target) ;
+
+    harvest(target) ;
+
+    transferEnergy(target: MyRoomObject): number;
+
+    findClosestByPath(type);
+
+    getPosition(): BotPosition;
+
+    setPosition(position: BotPosition): void;
+
+    moveByPath(any: object[] | string): number;
+
+    getCarryCapacity(): number;
+
+    findPathTo(target: BotPosition): object[];
+
+    getCarriedEnergy(): number;
+
+    clearMemory(variable: string): void;
+}
+
+export class ScreepsBot implements BotData
+{
+    private creep: Creep;
+
+    constructor(creep: Creep)
+    {
+        this.creep = creep;
+    }
+
+    name()
+    {
+        return this.creep.name;
+    }
+
+    getCarry()
+    {
+        return this.creep.carry;
+    }
+
+    getPosition(): BotPosition
+    {
+        return this.creep.pos;
+    }
+
+    setPosition(position: BotPosition): void
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    moveByPath(path: string | MyPath[]): number
+    {
+        return this.creep.moveByPath(path);
+    }
+
+    getCarryCapacity(): number
+    {
+        return this.creep.carryCapacity;
+    }
+
+    findPathTo(target: BotPosition): object[]
+    {
+        return this.creep.pos.findPathTo(target.x, target.y);
+    }
+
+    /**
+     *
+     * @param {string} variable
+     * @param value
+     * @returns {*}
+     */
+    memory(variable: string, value?: object)
+    {
+        if (typeof value !== "undefined")
+        {
+            this.creep.memory[variable] = value;
+            return value;
+        }
+
+        return this.creep.memory[variable];
+    }
+
+    clearMemory(variable: string): void
+    {
+        delete this.creep.memory[variable];
+    }
+
+    /**
+     * @returns {int}
+     */
+    carryingEnergy()
+    {
+        return this.creep.carry.energy;
+    }
+
+    /**
+     *
+     * @returns {boolean}
+     */
+    carryingMaxEnergy()
+    {
+        return this.carryingEnergy() === this.creep.carryCapacity;
+    }
+
+    /**
+     *
+     * @param {string} message
+     */
+    say(message: string)
+    {
+        this.creep.say(message);
+    }
+
+    moveTo(target: BotPosition)
+    {
+        return this.creep.moveTo(<RoomPosition>target);
+    }
+
+    moveToXY(x: number, y: number): number
+    {
+        return this.creep.moveTo(x, y);
+    }
+
+    /**
+     *
+     * @param {Source|Mineral} target
+     * @returns {*}
+     */
+    harvest(target)
+    {
         return this.creep.harvest(target);
     }
 
@@ -271,9 +394,18 @@ export class Bot implements BaseBot
     {
         return this.creep.pos.findClosestByPath(type);
     }
+
+    getCarriedEnergy(): number
+    {
+        return this.creep.carry.energy;
+    }
 }
 
 export class MyRoomObject
 {
     public pos: BotPosition;
+}
+
+interface MyPath extends PathStep
+{
 }

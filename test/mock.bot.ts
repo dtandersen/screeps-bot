@@ -1,56 +1,84 @@
 import {BotPosition} from "../src/entity.position";
-import {BaseBot, Component, MyRoomObject} from "../src/entity.bot";
+import {BotData, Component, MyRoomObject, UberBot} from "../src/entity.bot";
 
-export class MockBot implements BaseBot
+export class MockUberBot extends UberBot
 {
-    private component: Component;
-    public movingTo: BotPosition;
-    private position: BotPosition;
+    harvestAt: BotPosition;
     transferAt: MyRoomObject;
-    harvestAt: MyRoomObject;
+    movingTo: BotPosition;
+
+    setPosition(position: BotPosition): void
+    {
+        this.botData.setPosition(position);
+    }
+
+    transferEnergy(target: MyRoomObject): number
+    {
+        this.transferAt = target;
+        return super.transferEnergy(target);
+    }
+
+    moveToXY(x: number, y: number): number
+    {
+        this.movingTo = new BotPosition(x, y);
+        return this.botData.moveToXY(x, y);
+    }
+}
+
+export class MockBot implements BotData
+{
+    private position: BotPosition;
     [memory: string]: Object;
-
-    addComponent<T extends Component>(component: T): void
-    {
-        //this.component = component;
-        if (typeof this.memory["components"] === "undefined")
-        {
-            this.memory["components"] = {};
-        }
-
-        console.log(component.constructor["name"]);
-        this.memory["components"][component.constructor["name"]] = component;
-    }
-
-    getComponent<T extends Component>(name: string): T
-    {
-        return <T>this.memory["components"][name];
-    }
-
-    deleteComponent(name: string): void
-    {
-        // this.component = null;
-        delete this.memory["components"][name];
-    }
 
     name()
     {
         throw new Error("Method not implemented.");
     }
 
+    getPosition(): BotPosition
+    {
+        return this.position;
+    }
+
+    setPosition(position: BotPosition): void
+    {
+        this.position = position;
+    }
+
+    moveByPath(any: string | object[]): number
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    getCarryCapacity(): number
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    findPathTo(target: BotPosition): object[]
+    {
+        throw new Error("Method not implemented.");
+    }
+
+    getCarriedEnergy(): number
+    {
+        throw new Error("Method not implemented.");
+    }
+
     memory(variable: string, value?: object)
     {
-        throw new Error("Method not implemented.");
+        if (typeof value !== "undefined")
+        {
+            this.memory[variable] = value;
+            return;
+        }
+
+        return this.memory[variable];
     }
 
-    propertyUndefined(variable: any)
+    clearMemory(variable: string): void
     {
-        throw new Error("Method not implemented.");
-    }
-
-    clearMemory(variable: any)
-    {
-        throw new Error("Method not implemented.");
+        delete this.memory[variable];
     }
 
     carryingEnergy()
@@ -63,7 +91,7 @@ export class MockBot implements BaseBot
         throw new Error("Method not implemented.");
     }
 
-    say(message: any)
+    say(message: string)
     {
         throw new Error("Method not implemented.");
     }
@@ -88,26 +116,6 @@ export class MockBot implements BaseBot
         return dx <= radius && dy <= radius;
     }
 
-    clearBlocked()
-    {
-        throw new Error("Method not implemented.");
-    }
-
-    blocked(value?: object)
-    {
-        throw new Error("Method not implemented.");
-    }
-
-    incrementBlocked()
-    {
-        throw new Error("Method not implemented.");
-    }
-
-    clearPath()
-    {
-        throw new Error("Method not implemented.");
-    }
-
     harvest(target: any)
     {
         throw new Error("Method not implemented.");
@@ -123,10 +131,5 @@ export class MockBot implements BaseBot
     findClosestByPath(type: any)
     {
         throw new Error("Method not implemented.");
-    }
-
-    setPosition(x: number, y: number)
-    {
-        this.position = new BotPosition(x, y);
     }
 }

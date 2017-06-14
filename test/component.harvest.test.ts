@@ -1,22 +1,24 @@
 import {Expect, Test, SetupFixture} from "alsatian";
-import {MockBot} from "./mock.bot";
+import {MockBot, MockUberBot} from "./mock.bot";
 import {MockWorld} from "./mock.world";
 import {World} from "../src/entity.world";
 import {Harvester2, HarvesterComponent} from "../src/component.harvester2";
 import {MoveComponent} from "../src/component.move";
+import {MyRoomObject, UberBot} from "../src/entity.bot";
+import {BotPosition} from "../src/entity.position";
 
 export class ComponentHarvestTest
 {
     private harvester: Harvester2;
     private world: MockWorld;
-    private bot: MockBot;
+    private bot: MockUberBot;
 
     @SetupFixture
     public setupFixture()
     {
         this.world = new MockWorld();
         this.harvester = new Harvester2(this.world);
-        this.bot = new MockBot();
+        this.bot = new MockUberBot(new MockBot());
     }
 
     @Test("move to spawn")
@@ -74,7 +76,7 @@ export class ComponentHarvestTest
 
     private givenCreepAt(x: number, y: number)
     {
-        this.bot.setPosition(x, y);
+        this.bot.setPosition(new BotPosition(x, y));
     }
 
     private givenSpawnAt(x: number, y: number)
