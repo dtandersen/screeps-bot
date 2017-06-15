@@ -1,6 +1,7 @@
 import {World, WorldData} from "../src/entity.world";
 import {BotPosition} from "../src/entity.position";
-import {MyRoomObject} from "../src/entity.bot";
+import {BotData, MyRoomObject, UberBot} from "../src/entity.bot";
+import {MockBot, MockUberBot} from "./mock.bot";
 
 export class MockWorld extends World
 {
@@ -14,22 +15,36 @@ export class MockWorld extends World
      **/
     addSpawn(x: number, y: number): void
     {
-        // console.log("add spawn " + x + ", " + y);
         this.worldData.setSpawn({pos: {x: x, y: y, roomName: ""}});
     }
 
-    setEnv(env) {
-      this.worldData = new WorldDataStub(env);
+    setEnv(env)
+    {
+        this.worldData = new WorldDataStub(env);
+    }
+
+    getCreep(name: string): UberBot
+    {
+        return new MockUberBot(this.worldData.getCreep(name));
     }
 }
 
 export class WorldDataStub implements WorldData
 {
-    spawn: MyRoomObject;
-    env: MyStuff;
+    private spawn: MyRoomObject;
+    private env: MyStuff;
 
-    constructor(env?: MyStuff){
-      this.env=env;
+    constructor(env?: MyStuff)
+    {
+        this.env = env;
+    }
+
+    getCreep(name: string): BotData
+    {
+        let botData = new MockBot();
+        botData.setPosition(new BotPosition(this.env.creep[name].x, this.env.creep[name].y));
+
+        return botData;
     }
 
     /**

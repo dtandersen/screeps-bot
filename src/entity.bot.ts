@@ -1,5 +1,4 @@
 import {BotPosition} from "./entity.position";
-import {deprecate} from "util";
 
 export class UberBot
 {
@@ -15,14 +14,15 @@ export class UberBot
         return this.botData.name();
     }
 
-    addComponent<T extends Component>(t: new()=> T, component: T): void
+    addComponent<T extends Component>(t: new() => T, component: T): void
     {
-      // console.log("begin addComponent");
+        // console.log("begin addComponent");
         let name = t["name"];
         //  console.log("name=" + name);
         //  console.log("component=" + JSON.stringify(component));
-        if (name === "Object") {
-          throw new Error("Component may not be Object: " + JSON.stringify(component));
+        if (name === "Object")
+        {
+            throw new Error("Component may not be Object: " + JSON.stringify(component));
         }
 
         if (typeof this.memory("components") === "undefined")
@@ -38,9 +38,9 @@ export class UberBot
         // console.log("end addComponent");
     }
 
-    getComponent<T extends Component>(t: new()=>T): T
+    getComponent<T extends Component>(t: new() => T): T
     {
-      // console.log("begin getComponent");
+        // console.log("begin getComponent");
         let components = <Component[]>this.memory("components");
         let component = <T>components[t["name"]];
         // console.log("get component " + name + "=" + JSON.stringify(component));
@@ -48,10 +48,10 @@ export class UberBot
         return component;
     }
 
-    deleteComponent<T extends Component>(t: new()=>T)
+    deleteComponent<T extends Component>(t: new() => T)
     {
-      let name = t["name"];
-      // console.log("begin deleteComponent");
+        let name = t["name"];
+        // console.log("begin deleteComponent");
         // console.log("delete component " + name);
         delete this.memory("components")[name];
         // console.log("components=" + JSON.stringify(this.memory("components")));

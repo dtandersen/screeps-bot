@@ -11,124 +11,97 @@ export class ComponentHarvestTest
 {
     private harvester: Harvester2;
     private world: MockWorld;
-    private bot: MockUberBot;
 
     @Setup
     public setup()
     {
         this.world = new MockWorld();
         this.harvester = new Harvester2(this.world);
-        this.bot = new MockUberBot(new MockBot());
     }
 
     @TestCase({
-      spawns: {"Spawn1": {pos:{x: 5, y: 5}}},
-      sources: [ {x: 7, y: 7}],
-      creep: { Fred: {x:1, y: 1}}
+        spawns: {"Spawn1": {pos: {x: 5, y: 5}}},
+        sources: [{x: 7, y: 7}],
+        creep: {Fred: {x: 1, y: 1}}
     })
     @Test("move to spawn")
-    public test1(env:MyStuff)
+    public test1(env: MyStuff)
     {
-      this.givenEnv(env);
-        // this.givenSpawnAt(5, 5);
-        this.givenCreepAt(1, 1);
-        this.bot.addComponent(HarvesterComponent, {spawn: "Spawn1"});
+        this.givenEnv(env);
+        let bot = this.world.getCreep("Fred");
+        bot.addComponent(HarvesterComponent, {spawn: "Spawn1"});
 
-        this.harvester.process(this.bot);
+        this.harvester.process(bot);
 
-        Expect(this.bot.getComponent(MoveComponent)).toEqual(new MoveComponent(5, 5));
+        Expect(bot.getComponent(MoveComponent)).toEqual(new MoveComponent(5, 5));
     }
 
     @TestCase({
-      spawns: {"Spawn1": {pos:{x: 6, y: 6}}},
-      sources: [ {x: 7, y: 7}],
-      creep: { Fred: {x:1, y: 1}}
+        spawns: {"Spawn1": {pos: {x: 6, y: 6}}},
+        sources: [{x: 7, y: 7}],
+        creep: {Fred: {x: 1, y: 1}}
     })
     @Test("move to another spawn")
-    public test2(env:MyStuff)
+    public test2(env: MyStuff)
     {
-      this.givenEnv(env);
-        // this.givenSpawnAt(6, 6);
-        this.givenCreepAt(1, 1);
-        this.bot.addComponent(HarvesterComponent, {spawn: "Spawn1"});
-        Expect(this.bot.getComponent(HarvesterComponent)).toEqual({spawn: "Spawn1"});
+        this.givenEnv(env);
+        let bot = this.world.getCreep("Fred");
+        bot.addComponent(HarvesterComponent, {spawn: "Spawn1"});
+        Expect(bot.getComponent(HarvesterComponent)).toEqual({spawn: "Spawn1"});
 
-        this.harvester.process(this.bot);
+        this.harvester.process(bot);
 
-        Expect(this.bot.getComponent(MoveComponent)).toEqual(new MoveComponent(6, 6));
-        Expect(this.bot.getComponent(HarvesterComponent)).toEqual({spawn: "Spawn1"});
+        Expect(bot.getComponent(MoveComponent)).toEqual(new MoveComponent(6, 6));
+        Expect(bot.getComponent(HarvesterComponent)).toEqual({spawn: "Spawn1"});
     }
 
     @TestCase({
-      spawns: {"Spawn1": {pos:{x: 4, y: 4}}},
-      sources: [ {x: 7, y: 7}],
-      creep: { Fred: {x:3, y: 3}}
+        spawns: {"Spawn1": {pos: {x: 4, y: 4}}},
+        sources: [{x: 7, y: 7}],
+        creep: {Fred: {x: 3, y: 3}}
     })
     @TestCase({
-      spawns: {"Spawn1": {pos:{x: 5, y: 5}}},
-      sources: [ {x: 1, y: 1}],
-      creep: { Fred: {x:4, y: 4}}
+        spawns: {"Spawn1": {pos: {x: 5, y: 5}}},
+        sources: [{x: 1, y: 1}],
+        creep: {Fred: {x: 4, y: 4}}
     })
     @Test("harvest from source")
-    public harvest(env:MyStuff)
+    public harvest(env: MyStuff)
     {
         this.givenEnv(env);
         let spawn = env.spawns["Spawn1"];
-        // this.givenSpawns(env.spawns);
-        this.givenCreepAt(env.creep.x, env.creep.y);
-        this.bot.addComponent(MoveComponent, {x:spawn.x, y:spawn.y});
-        this.bot.addComponent(HarvesterComponent, {spawn: "Spawn1", state: "pickup"});
-        // console.log("spawn b=" + JSON.stringify(spawn));
+        let bot = <MockUberBot>this.world.getCreep("Fred");
+        console.log("fred=" + JSON.stringify(bot));
+        bot.addComponent(MoveComponent, {x: spawn.x, y: spawn.y});
+        bot.addComponent(HarvesterComponent, {spawn: "Spawn1", state: "pickup"});
 
-        this.harvester.process(this.bot);
+        this.harvester.process(bot);
 
-        // console.log("spawn a=" + JSON.stringify(spawn));
-        Expect(this.bot.getComponent(MoveComponent)).not.toBeDefined();
-        Expect(this.bot.harvestAt).toEqual({pos: {x: spawn.pos.x, y: spawn.pos.y, roomName: ""}});
+        Expect(bot.getComponent(MoveComponent)).not.toBeDefined();
+        Expect(bot.harvestAt).toEqual({pos: {x: spawn.pos.x, y: spawn.pos.y, roomName: ""}});
     }
 
     @TestCase({
-      spawns: {"Spawn1": {pos:{x: 4, y: 4, roomName: ""}}},
-      sources: [ {x: 7, y: 7}],
-      creep: { Fred: {x:3, y: 3}}
+        spawns: {"Spawn1": {pos: {x: 4, y: 4, roomName: ""}}},
+        sources: [{x: 7, y: 7}],
+        creep: {Fred: {x: 3, y: 3}}
     })
     @Test("transfer to spawn")
-    public test3(env:MyStuff)
+    public test3(env: MyStuff)
     {
-      this.givenEnv(env);
-        // this.givenSpawnAt(4, 4);
-        this.givenCreepAt(3, 3);
-        this.bot.addComponent(MoveComponent, {x:3, y:3});
-        this.bot.addComponent(HarvesterComponent, {spawn: "Spawn1", state: "deliver"});
+        this.givenEnv(env);
+        let bot = <MockUberBot>this.world.getCreep("Fred");
+        bot.addComponent(MoveComponent, {x: 3, y: 3});
+        bot.addComponent(HarvesterComponent, {spawn: "Spawn1", state: "deliver"});
 
-        this.harvester.process(this.bot);
+        this.harvester.process(bot);
 
-        Expect(this.bot.getComponent(MoveComponent)).not.toBeDefined();
-        Expect(this.bot.transferAt).toEqual({pos: {x: 4, y: 4, roomName: ""}});
-    }
-
-    private givenCreepAt(x: number, y: number)
-    {
-        this.bot.setPosition(new BotPosition(x, y));
-    }
-
-    private givenSpawnAt(x: number, y: number)
-    {
-        this.world.addSpawn(x, y);
-    }
-
-    private givenSpawns(spawns)
-    {
-      console.log("given spawns=" + JSON.stringify(spawns));
-      for (var id in spawns) {
-        let spawn = spawns[id];
-        // console.log("given=" + JSON.stringify(spawn));
-        this.world.addSpawn(spawn.x, spawn.y);
-      }
+        Expect(bot.getComponent(MoveComponent)).not.toBeDefined();
+        Expect(bot.transferAt).toEqual({pos: {x: 4, y: 4, roomName: ""}});
     }
 
     private givenEnv(env)
     {
-      this.world.setEnv(env);
+        this.world.setEnv(env);
     }
 }

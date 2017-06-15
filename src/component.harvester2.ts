@@ -1,8 +1,7 @@
 import {ScreepsController} from "./controller.screeps";
-import {BotData, Component, UberBot,MyRoomObject } from "./entity.bot";
+import {Component, UberBot, MyRoomObject} from "./entity.bot";
 import {MoveComponent} from "./component.move";
 import {World} from "./entity.world";
-import {BotPosition} from "../src/entity.position";
 
 export class Harvester2 implements ScreepsController
 {
@@ -17,13 +16,13 @@ export class Harvester2 implements ScreepsController
     {
         let harv = bot.getComponent(HarvesterComponent);
         let spawn = <MyRoomObject>this.world.getSpawn(harv.spawn);
-        console.log(harv.spawn+"="+JSON.stringify(spawn));
-        if (harv.state==="pickup")
+        console.log(harv.spawn + "=" + JSON.stringify(spawn));
+        if (harv.state === "pickup")
         {
-          // console.log("process spawn=" + JSON.stringify(spawn));
-          bot.harvest({pos:{x:spawn.pos.x, y:spawn.pos.y, roomName:""}});
-          bot.deleteComponent(MoveComponent);
-          return;
+            console.log("harvest");
+            bot.harvest({pos: {x: spawn.pos.x, y: spawn.pos.y, roomName: ""}});
+            bot.deleteComponent(MoveComponent);
+            return;
         }
 
         if (bot.isNear(spawn.pos.x, spawn.pos.y, 1))
@@ -40,6 +39,6 @@ export class Harvester2 implements ScreepsController
 
 export class HarvesterComponent implements Component
 {
-  public state:string;
-  public spawn:string;
+    public state: string;
+    public spawn: string;
 }

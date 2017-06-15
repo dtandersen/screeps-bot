@@ -26,7 +26,7 @@ export class MockUberBot extends UberBot
 
     harvest(target: BotPosition): number
     {
-        this.harvestAt=target;
+        this.harvestAt = target;
         return super.harvest(target);
     }
 }
@@ -34,7 +34,7 @@ export class MockUberBot extends UberBot
 export class MockBot implements BotData
 {
     private position: BotPosition;
-    [memory: string]: Object;
+    [memory: string]: any;
 
     name(): string
     {
@@ -71,17 +71,15 @@ export class MockBot implements BotData
         throw new Error("Method not implemented.");
     }
 
-    memory(variable: string, value?: object)
+    memory<T>(variable: string, value?: T): T
     {
         if (typeof value !== "undefined")
         {
-            // console.log("set memory " + variable + "=" + JSON.stringify(value));
             this.memory[variable] = value;
             return;
         }
 
-        // console.log("get memory " + variable + "=" + JSON.stringify(this.memory[variable]));
-        return this.memory[variable];
+        return <T>this.memory[variable];
     }
 
     clearMemory(variable: string): void
