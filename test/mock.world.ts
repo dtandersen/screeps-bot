@@ -41,10 +41,11 @@ export class WorldDataStub implements WorldData
 
     getCreep(name: string): BotData
     {
-        let botData = new MockBot();
-        botData.setPosition(new BotPosition(this.env.creep[name].x, this.env.creep[name].y));
+        // let botData = new MockBot();
+        // let pos = this.env.creep[name].pos;
+        // botData.setPosition(new BotPosition(pos.x, pos.y));
 
-        return botData;
+        return new MockBot(this.env.creep[name]);
     }
 
     /**
@@ -69,5 +70,10 @@ export class WorldDataStub implements WorldData
 export interface MyStuff
 {
     spawns: MyRoomObject[];
-    creep: BotPosition;
+    creep: BotDef;
+}
+
+interface BotDef
+{
+    pos: BotPosition;
 }

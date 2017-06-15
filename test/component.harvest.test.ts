@@ -22,7 +22,7 @@ export class ComponentHarvestTest
     @TestCase({
         spawns: {"Spawn1": {pos: {x: 5, y: 5}}},
         sources: [{x: 7, y: 7}],
-        creep: {Fred: {x: 1, y: 1}}
+        creep: {Fred: {pos: {x: 1, y: 1}}}
     })
     @Test("move to spawn")
     public test1(env: MyStuff)
@@ -39,7 +39,7 @@ export class ComponentHarvestTest
     @TestCase({
         spawns: {"Spawn1": {pos: {x: 6, y: 6}}},
         sources: [{x: 7, y: 7}],
-        creep: {Fred: {x: 1, y: 1}}
+        creep: {Fred: {pos: {x: 1, y: 1}}}
     })
     @Test("move to another spawn")
     public test2(env: MyStuff)
@@ -58,12 +58,24 @@ export class ComponentHarvestTest
     @TestCase({
         spawns: {"Spawn1": {pos: {x: 4, y: 4}}},
         sources: [{x: 7, y: 7}],
-        creep: {Fred: {x: 3, y: 3}}
+        creep: {
+            Fred: {
+                pos: {x: 3, y: 3},
+                carryEnergy: 0,
+                carryCapacity: 50
+            }
+        }
     })
     @TestCase({
         spawns: {"Spawn1": {pos: {x: 5, y: 5}}},
         sources: [{x: 1, y: 1}],
-        creep: {Fred: {x: 4, y: 4}}
+        creep: {
+            Fred: {
+                pos: {x: 4, y: 4},
+                carryEnergy: 0,
+                carryCapacity: 50
+            }
+        }
     })
     @Test("harvest from source")
     public harvest(env: MyStuff)
@@ -84,7 +96,7 @@ export class ComponentHarvestTest
     @TestCase({
         spawns: {"Spawn1": {pos: {x: 4, y: 4, roomName: ""}}},
         sources: [{x: 7, y: 7}],
-        creep: {Fred: {x: 3, y: 3}}
+        creep: {Fred: {pos: {x: 3, y: 3}}}
     })
     @Test("transfer to spawn")
     public test3(env: MyStuff)
@@ -98,6 +110,62 @@ export class ComponentHarvestTest
 
         Expect(bot.getComponent(MoveComponent)).not.toBeDefined();
         Expect(bot.transferAt).toEqual({pos: {x: 4, y: 4, roomName: ""}});
+    }
+
+    @TestCase({
+        spawns: {"Spawn1": {pos: {x: 5, y: 5}}},
+        sources: [{x: 1, y: 1}],
+        creep: {
+            Fred: {
+                pos: {x: 3, y: 3},
+                carryEnergy: 50,
+                carryCapacity: 50
+            }
+        }
+    })
+    @Test("full; deliver to spawn")
+    public full(env: MyStuff)
+    {
+        this.givenEnv(env);
+        let spawn = env.spawns["Spawn1"];
+        let bot = <MockUberBot>this.world.getCreep("Fred");
+        console.log("fred=" + JSON.stringify(bot));
+        // bot.addComponent(MoveComponent, {x: spawn.x, y: spawn.y});
+        bot.addComponent(HarvesterComponent, {spawn: "Spawn1", state: "pickup"});
+
+        this.harvester.process(bot);
+
+        Expect(bot.getComponent(MoveComponent)).toEqual({x: 5, y: 5});
+        Expect(bot.getComponent(HarvesterComponent)).toEqual({spawn: "Spawn1", state: "deliver"});
+    }
+
+    @TestCase({
+        spawns: {"Spawn1": {pos: {x: 5, y: 5}}},
+        sources: {
+            "abc": {pos: {x: 1, y: 1}}
+        },
+        creep: {
+            Fred: {
+                pos: {x: 3, y: 3},
+                carryEnergy: 0,
+                carryCapacity: 50
+            }
+        }
+    })
+    @Test("empty; switch to pickup")
+    public empty(env: MyStuff)
+    {
+        this.givenEnv(env);
+        let spawn = env.spawns["Spawn1"];
+        let bot = <MockUberBot>this.world.getCreep("Fred");
+        console.log("fred=" + JSON.stringify(bot));
+        // bot.addComponent(MoveComponent, {x: spawn.x, y: spawn.y});
+        bot.addComponent(HarvesterComponent, {spawn: "Spawn1", state: "deliver", source: "abc"});
+
+        this.harvester.process(bot);
+
+        Expect(bot.getComponent(MoveComponent)).toEqual({x: 1, y: 1});
+        Expect(bot.getComponent(HarvesterComponent)).toEqual({spawn: "Spawn1", state: "pickup", source: "abc"});
     }
 
     private givenEnv(env)

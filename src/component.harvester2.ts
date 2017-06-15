@@ -16,23 +16,29 @@ export class Harvester2 implements ScreepsController
     {
         let harv = bot.getComponent(HarvesterComponent);
         let spawn = <MyRoomObject>this.world.getSpawn(harv.spawn);
-        console.log(harv.spawn + "=" + JSON.stringify(spawn));
+
+        if (harv.state === "pickup" && bot.carryingMaxEnergy())
+        {
+            harv.state = "deliver";
+        }
+
         if (harv.state === "pickup")
         {
             console.log("harvest");
             bot.harvest({pos: {x: spawn.pos.x, y: spawn.pos.y, roomName: ""}});
             bot.deleteComponent(MoveComponent);
-            return;
-        }
-
-        if (bot.isNear(spawn.pos.x, spawn.pos.y, 1))
-        {
-            bot.deleteComponent(MoveComponent);
-            bot.transferEnergy(spawn);
         }
         else
         {
-            bot.addComponent(MoveComponent, new MoveComponent(spawn.pos.x, spawn.pos.y));
+            if (bot.isNear(spawn.pos.x, spawn.pos.y, 1))
+            {
+                bot.deleteComponent(MoveComponent);
+                bot.transferEnergy(spawn);
+            }
+            else
+            {
+                bot.addComponent(MoveComponent, new MoveComponent(spawn.pos.x, spawn.pos.y));
+            }
         }
     }
 }
@@ -41,4 +47,5 @@ export class HarvesterComponent implements Component
 {
     public state: string;
     public spawn: string;
+    public source: string;
 }

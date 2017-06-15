@@ -33,8 +33,26 @@ export class MockUberBot extends UberBot
 
 export class MockBot implements BotData
 {
-    private position: BotPosition;
-    [memory: string]: any;
+    private pos: BotPosition;
+    //[memory: string]: any;
+    private carryEnergy: number;
+    private carryCapacity: number;
+    private mem: object;
+
+    constructor(data?: MockBot)
+    {
+        if (typeof data !== "undefined")
+        {
+            this.pos = data.pos;
+            //this.mem = data.mem;
+            this.carryEnergy = data.carryEnergy;
+            this.carryCapacity = data.carryCapacity;
+        }
+        else
+        {
+        }
+        this.mem = {};
+    }
 
     name(): string
     {
@@ -43,12 +61,12 @@ export class MockBot implements BotData
 
     getPosition(): BotPosition
     {
-        return this.position;
+        return this.pos;
     }
 
     setPosition(position: BotPosition): void
     {
-        this.position = position;
+        this.pos = position;
     }
 
     moveByPath(any: string | object[]): number
@@ -58,12 +76,12 @@ export class MockBot implements BotData
 
     carryingEnergy(): number
     {
-        throw new Error("Method not implemented.");
+        return this.carryEnergy;
     }
 
     getCarryCapacity(): number
     {
-        throw new Error("Method not implemented.");
+        return this.carryCapacity;
     }
 
     findPathTo(target: BotPosition): object[]
@@ -75,16 +93,16 @@ export class MockBot implements BotData
     {
         if (typeof value !== "undefined")
         {
-            this.memory[variable] = value;
+            this.mem[variable] = value;
             return;
         }
 
-        return <T>this.memory[variable];
+        return <T>this.mem[variable];
     }
 
     clearMemory(variable: string): void
     {
-        delete this.memory[variable];
+        delete this.mem[variable];
     }
 
     carryingMaxEnergy(): boolean
@@ -104,15 +122,15 @@ export class MockBot implements BotData
 
     moveToXY(x: number, y: number): number
     {
-        this.movingTo = new BotPosition(x, y);
+        // this.movingTo = new BotPosition(x, y);
 
         return 0;
     }
 
     isNear(x: number, y: number, radius = 0): boolean
     {
-        let dx = Math.abs(x - this.position.x);
-        let dy = Math.abs(y - this.position.y);
+        let dx = Math.abs(x - this.pos.x);
+        let dy = Math.abs(y - this.pos.y);
 
         return dx <= radius && dy <= radius;
     }
@@ -124,7 +142,7 @@ export class MockBot implements BotData
 
     transferEnergy(target: RoomObject): number
     {
-        this.transferAt = target;
+        // this.transferAt = target;
 
         return 0;
     }
