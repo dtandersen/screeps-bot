@@ -1,3 +1,5 @@
+"use strict";
+
 import {BotData, Component, UberBot} from "./entity.bot";
 import {ScreepsController} from "./controller.screeps";
 
@@ -6,6 +8,11 @@ export class Move implements ScreepsController
     process(bot: UberBot)
     {
         let moveComponent = bot.getComponent(MoveComponent);
+        if (moveComponent === undefined)
+        {
+            return;
+        }
+
         if (bot.isNear(moveComponent.x, moveComponent.y, 1))
         {
             bot.deleteComponent(MoveComponent);
@@ -24,13 +31,7 @@ export class Move implements ScreepsController
 
 export class MoveComponent implements Component
 {
-    public x: number;
-    public y: number;
-    public roomName: string;
-
-    constructor(x?: number, y?: number)
-    {
-        this.x = x;
-        this.y = y;
-    }
+    x: number;
+    y: number;
+    roomName: string;
 }

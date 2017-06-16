@@ -12,11 +12,12 @@
     "declaration": false,
     "outDir": "dist",
 	"experimentalDecorators": true,
-    "alwaysStrict": true
+    "strict": false
   },
   "include": [
     "./src/**/*",
     "./test/**/*",
     "node_modules/screeps-typescript-declarations/dist/screeps.d.ts"
-  ]
+  ],
+  "exclude": ["dist"]
 }

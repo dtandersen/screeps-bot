@@ -1,3 +1,5 @@
+"use strict";
+
 import {BotPosition} from "./entity.position";
 import {BotData, MyRoomObject, ScreepsBotData} from "./entity.bot";
 

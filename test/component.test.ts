@@ -1,3 +1,5 @@
+"use strict";
+
 import {Expect, Test} from "alsatian";
 import {Move, MoveComponent} from "../src/component.move";
 import {BotPosition} from "../src/entity.position";

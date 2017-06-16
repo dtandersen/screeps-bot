@@ -1,3 +1,5 @@
+"use strict";
+
 import {ScreepsController} from "./controller.screeps";
 import {Component, UberBot, MyRoomObject} from "./entity.bot";
 import {MoveComponent} from "./component.move";
@@ -15,6 +17,11 @@ export class Harvester2 implements ScreepsController
     process(bot: UberBot): void
     {
         let harv = bot.getComponent(HarvesterComponent);
+        if (harv === undefined)
+        {
+            return;
+        }
+
         let spawn = this.world.getSpawn(harv.spawn);
 
         if (harv.state === "pickup" && bot.carryingMaxEnergy())

@@ -1,3 +1,5 @@
+"use strict";
+
 import {Expect, Test, TestCase, Setup} from "alsatian";
 import {MockBot, MockUberBot} from "./mock.bot";
 import {MockWorld, MyStuff} from "./mock.world";

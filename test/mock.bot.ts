@@ -1,3 +1,5 @@
+"use strict";
+
 import {BotPosition} from "../src/entity.position";
 import {BotData, Component, MyRoomObject, UberBot} from "../src/entity.bot";
 
@@ -92,7 +94,7 @@ export class MockBot implements BotData
         if (typeof value !== "undefined")
         {
             this.mem[variable] = value;
-            return;
+            return value;
         }
 
         return <T>this.mem[variable];

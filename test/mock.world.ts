@@ -8,7 +8,12 @@ export class MockWorld extends World
 {
     constructor()
     {
-        super(new WorldDataStub());
+        super(new WorldDataStub({
+                creep: {pos: {x: 0, y: 0, roomName: ""}},
+                spawns: [],
+                sources: []
+            }
+        ));
     }
 
     /**
@@ -35,7 +40,7 @@ export class WorldDataStub implements WorldData
     private spawn: MyRoomObject;
     private env: MyStuff;
 
-    constructor(env?: MyStuff)
+    constructor(env: MyStuff)
     {
         this.env = env;
     }

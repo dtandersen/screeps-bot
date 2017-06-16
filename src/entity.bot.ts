@@ -1,3 +1,5 @@
+"use strict";
+
 import {BotPosition} from "./entity.position";
 
 export class UberBot
@@ -38,10 +40,10 @@ export class UberBot
         // console.log("end addComponent");
     }
 
-    getComponent<T extends Component>(t: new() => T): T
+    getComponent<T extends Component>(t: new() => T): T | undefined
     {
         // console.log("begin getComponent");
-        let components = <Component[]>this.memory("components");
+        let components = this.memory("components");
         if (typeof components === "undefined")
         {
             return undefined;
@@ -363,6 +365,11 @@ export class ScreepsBotData implements BotData
      */
     carryingEnergy(): number
     {
+        if (typeof this.creep.carry.energy === "undefined")
+        {
+            return 0;
+        }
+
         return this.creep.carry.energy;
     }
 
@@ -421,11 +428,6 @@ export class ScreepsBotData implements BotData
     findClosestByPath(type)
     {
         return this.creep.pos.findClosestByPath(type);
-    }
-
-    getCarriedEnergy(): number
-    {
-        return this.creep.carry.energy;
     }
 }
 

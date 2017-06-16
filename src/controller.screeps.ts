@@ -1,3 +1,5 @@
+"use strict";
+
 import {BotData, UberBot} from "./entity.bot";
 
 export interface ScreepsController

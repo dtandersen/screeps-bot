@@ -1,3 +1,5 @@
+"use strict";
+
 import {ScreepsBotData, UberBot} from "./entity.bot";
 import {Harvester} from "./component.harvester";
 import {Spawner} from "./component.spawner";

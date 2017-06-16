@@ -1,3 +1,5 @@
+"use strict";
+
 export class BotPosition
 {
     roomName: string;
