@@ -21,7 +21,7 @@ export class ComponentHarvestTest
 
     @TestCase({
         spawns: {"Spawn1": {pos: {x: 5, y: 5}}},
-        sources: [{x: 7, y: 7}],
+        sources: [{id: "abc", pos: {x: 7, y: 7}}],
         creep: {Fred: {pos: {x: 1, y: 1}}}
     })
     @Test("move to spawn")
@@ -29,16 +29,16 @@ export class ComponentHarvestTest
     {
         this.givenEnv(env);
         let bot = this.world.getCreep("Fred");
-        bot.addComponent(HarvesterComponent, {spawn: "Spawn1"});
+        bot.addComponent(HarvesterComponent, {spawn: "Spawn1", roomName: "ROOM"});
 
         this.harvester.process(bot);
 
-        Expect(bot.getComponent(MoveComponent)).toEqual(new MoveComponent(5, 5));
+        Expect(bot.getComponent(MoveComponent)).toEqual({x: 5, y: 5, roomName: "ROOM"});
     }
 
     @TestCase({
         spawns: {"Spawn1": {pos: {x: 6, y: 6}}},
-        sources: [{x: 7, y: 7}],
+        sources: [{id: "abc", pos: {x: 7, y: 7}}],
         creep: {Fred: {pos: {x: 1, y: 1}}}
     })
     @Test("move to another spawn")
@@ -46,21 +46,21 @@ export class ComponentHarvestTest
     {
         this.givenEnv(env);
         let bot = this.world.getCreep("Fred");
-        bot.addComponent(HarvesterComponent, {spawn: "Spawn1"});
-        Expect(bot.getComponent(HarvesterComponent)).toEqual({spawn: "Spawn1"});
+        bot.addComponent(HarvesterComponent, {spawn: "Spawn1", roomName: "ROOM"});
+        Expect(bot.getComponent(HarvesterComponent)).toEqual({spawn: "Spawn1", roomName: "ROOM"});
 
         this.harvester.process(bot);
 
-        Expect(bot.getComponent(MoveComponent)).toEqual(new MoveComponent(6, 6));
-        Expect(bot.getComponent(HarvesterComponent)).toEqual({spawn: "Spawn1"});
+        Expect(bot.getComponent(MoveComponent)).toEqual({x: 6, y: 6, roomName: "ROOM"});
+        Expect(bot.getComponent(HarvesterComponent)).toEqual({spawn: "Spawn1", roomName: "ROOM"});
     }
 
     @TestCase({
         spawns: {"Spawn1": {pos: {x: 4, y: 4}}},
-        sources: [{x: 7, y: 7}],
+        sources: [{id: "abc", pos: {x: 7, y: 7, roomName: "ROOM"}}],
         creep: {
             Fred: {
-                pos: {x: 3, y: 3},
+                pos: {x: 6, y: 6},
                 carryEnergy: 0,
                 carryCapacity: 50
             }
@@ -68,10 +68,10 @@ export class ComponentHarvestTest
     })
     @TestCase({
         spawns: {"Spawn1": {pos: {x: 5, y: 5}}},
-        sources: [{x: 1, y: 1}],
+        sources: [{id: "abc", pos: {x: 1, y: 1, roomName: "ROOM"}}],
         creep: {
             Fred: {
-                pos: {x: 4, y: 4},
+                pos: {x: 1, y: 1},
                 carryEnergy: 0,
                 carryCapacity: 50
             }
@@ -81,21 +81,22 @@ export class ComponentHarvestTest
     public harvest(env: MyStuff)
     {
         this.givenEnv(env);
+        let source = <Source>env.sources[0];
         let spawn = env.spawns["Spawn1"];
         let bot = <MockUberBot>this.world.getCreep("Fred");
         console.log("fred=" + JSON.stringify(bot));
-        bot.addComponent(MoveComponent, {x: spawn.x, y: spawn.y});
-        bot.addComponent(HarvesterComponent, {spawn: "Spawn1", state: "pickup"});
+        bot.addComponent(MoveComponent, {x: spawn.x, y: spawn.y, roomName: "ROOM"});
+        bot.addComponent(HarvesterComponent, {spawn: "Spawn1", state: "pickup", source: "abc", roomName: "ROOM"});
 
         this.harvester.process(bot);
 
         Expect(bot.getComponent(MoveComponent)).not.toBeDefined();
-        Expect(bot.harvestAt).toEqual({pos: {x: spawn.pos.x, y: spawn.pos.y, roomName: ""}});
+        Expect(bot.harvestAt).toEqual({id: "abc", pos: {x: source.pos.x, y: source.pos.y, roomName: "ROOM"}});
     }
 
     @TestCase({
-        spawns: {"Spawn1": {pos: {x: 4, y: 4, roomName: ""}}},
-        sources: [{x: 7, y: 7}],
+        spawns: {"Spawn1": {pos: {x: 4, y: 4, roomName: "ROOM"}}},
+        sources: [{id: "abc", pos: {x: 7, y: 7}}],
         creep: {Fred: {pos: {x: 3, y: 3}}}
     })
     @Test("transfer to spawn")
@@ -103,18 +104,18 @@ export class ComponentHarvestTest
     {
         this.givenEnv(env);
         let bot = <MockUberBot>this.world.getCreep("Fred");
-        bot.addComponent(MoveComponent, {x: 3, y: 3});
-        bot.addComponent(HarvesterComponent, {spawn: "Spawn1", state: "deliver"});
+        bot.addComponent(MoveComponent, {x: 3, y: 3, roomName: "ROOM"});
+        bot.addComponent(HarvesterComponent, {spawn: "Spawn1", state: "deliver", roomName: "ROOM"});
 
         this.harvester.process(bot);
 
         Expect(bot.getComponent(MoveComponent)).not.toBeDefined();
-        Expect(bot.transferAt).toEqual({pos: {x: 4, y: 4, roomName: ""}});
+        Expect(bot.transferAt).toEqual({pos: {x: 4, y: 4, roomName: "ROOM"}});
     }
 
     @TestCase({
         spawns: {"Spawn1": {pos: {x: 5, y: 5}}},
-        sources: [{x: 1, y: 1}],
+        sources: [{id: "abc", pos: {x: 1, y: 1}}],
         creep: {
             Fred: {
                 pos: {x: 3, y: 3},
@@ -131,19 +132,22 @@ export class ComponentHarvestTest
         let bot = <MockUberBot>this.world.getCreep("Fred");
         console.log("fred=" + JSON.stringify(bot));
         // bot.addComponent(MoveComponent, {x: spawn.x, y: spawn.y});
-        bot.addComponent(HarvesterComponent, {spawn: "Spawn1", state: "pickup"});
+        bot.addComponent(HarvesterComponent, {spawn: "Spawn1", state: "pickup", roomName: "ROOM"});
 
         this.harvester.process(bot);
 
-        Expect(bot.getComponent(MoveComponent)).toEqual({x: 5, y: 5});
-        Expect(bot.getComponent(HarvesterComponent)).toEqual({spawn: "Spawn1", state: "deliver"});
+        Expect(bot.getComponent(MoveComponent)).toEqual({x: 5, y: 5, roomName: "ROOM"});
+        Expect(bot.getComponent(HarvesterComponent)).toEqual({spawn: "Spawn1", state: "deliver", roomName: "ROOM"});
     }
 
     @TestCase({
         spawns: {"Spawn1": {pos: {x: 5, y: 5}}},
-        sources: {
-            "abc": {pos: {x: 1, y: 1}}
-        },
+        sources: [
+            {
+                id: "abc",
+                pos: {x: 1, y: 1}
+            }
+        ],
         creep: {
             Fred: {
                 pos: {x: 3, y: 3},
@@ -159,13 +163,17 @@ export class ComponentHarvestTest
         let spawn = env.spawns["Spawn1"];
         let bot = <MockUberBot>this.world.getCreep("Fred");
         console.log("fred=" + JSON.stringify(bot));
-        // bot.addComponent(MoveComponent, {x: spawn.x, y: spawn.y});
-        bot.addComponent(HarvesterComponent, {spawn: "Spawn1", state: "deliver", source: "abc"});
+        bot.addComponent(HarvesterComponent, {spawn: "Spawn1", state: "deliver", source: "abc", roomName: "ROOM"});
 
         this.harvester.process(bot);
 
-        Expect(bot.getComponent(MoveComponent)).toEqual({x: 1, y: 1});
-        Expect(bot.getComponent(HarvesterComponent)).toEqual({spawn: "Spawn1", state: "pickup", source: "abc"});
+        Expect(bot.getComponent(MoveComponent)).toEqual({x: 1, y: 1, roomName: "ROOM"});
+        Expect(bot.getComponent(HarvesterComponent)).toEqual({
+            spawn: "Spawn1",
+            state: "pickup",
+            source: "abc",
+            roomName: "ROOM"
+        });
     }
 
     private givenEnv(env)

@@ -1,5 +1,5 @@
 import {BotPosition} from "./entity.position";
-import {BotData, MyRoomObject, ScreepsBot} from "./entity.bot";
+import {BotData, MyRoomObject, ScreepsBotData} from "./entity.bot";
 
 export class World
 {
@@ -15,9 +15,14 @@ export class World
         return this.worldData.getSpawn();
     }
 
-    getSpawn(name: string): MyRoomObject
+    getSpawn(name: string): Spawn
     {
         return this.worldData.getSpawnByName(name);
+    }
+
+    getObjectById<T>(id: string): T
+    {
+        return this.worldData.getObjectById<T>(id);
     }
 }
 
@@ -37,12 +42,13 @@ class ScreepsWorldRepository implements WorldRepository
 export interface WorldData
 {
     getSpawn(): MyRoomObject;
-    getSpawnByName(name: string): MyRoomObject;
+    getSpawnByName(name: string): Spawn;
     setSpawn(spawn: MyRoomObject): void;
     getCreep(name: string): BotData;
+    getObjectById<T>(id: string): T;
 }
 
-class ScreepsWorldData implements WorldData
+export class ScreepsWorldData implements WorldData
 {
     private game: Game;
 
@@ -51,9 +57,14 @@ class ScreepsWorldData implements WorldData
         this.game = game;
     }
 
+    getObjectById<T>(id: string): T
+    {
+        return Game.getObjectById<T>(id);
+    }
+
     getCreep(name: string): BotData
     {
-        return new ScreepsBot(this.game.creeps[name]);
+        return new ScreepsBotData(this.game.creeps[name]);
     }
 
     /**
@@ -66,7 +77,7 @@ class ScreepsWorldData implements WorldData
         return spawn;
     }
 
-    getSpawnByName(name: string): MyRoomObject
+    getSpawnByName(name: string): Spawn
     {
         let spawn = this.game.spawns[name];
 

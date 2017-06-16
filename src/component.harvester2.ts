@@ -15,18 +15,33 @@ export class Harvester2 implements ScreepsController
     process(bot: UberBot): void
     {
         let harv = bot.getComponent(HarvesterComponent);
-        let spawn = <MyRoomObject>this.world.getSpawn(harv.spawn);
+        let spawn = this.world.getSpawn(harv.spawn);
 
         if (harv.state === "pickup" && bot.carryingMaxEnergy())
         {
             harv.state = "deliver";
         }
+        else if (harv.state === "deliver" && bot.carryingEnergy() == 0)
+        {
+            harv.state = "pickup";
+        }
 
         if (harv.state === "pickup")
         {
-            console.log("harvest");
-            bot.harvest({pos: {x: spawn.pos.x, y: spawn.pos.y, roomName: ""}});
-            bot.deleteComponent(MoveComponent);
+            let source = this.world.getObjectById<Source>(harv.source);
+            // console.log("source=" + JSON.stringify(source));
+            if (bot.isNear(source.pos.x, source.pos.y, 1))
+            {
+                console.log("harvest");
+                let h = {pos: {x: source.pos.x, y: source.pos.y, roomName: harv.roomName}};
+                bot.harvest(source);
+                console.log(JSON.stringify(h));
+                bot.deleteComponent(MoveComponent);
+            }
+            else
+            {
+                bot.addComponent(MoveComponent, {x: source.pos.x, y: source.pos.y, roomName: harv.roomName});
+            }
         }
         else
         {
@@ -37,7 +52,7 @@ export class Harvester2 implements ScreepsController
             }
             else
             {
-                bot.addComponent(MoveComponent, new MoveComponent(spawn.pos.x, spawn.pos.y));
+                bot.addComponent(MoveComponent, {x: spawn.pos.x, y: spawn.pos.y, roomName: harv.roomName});
             }
         }
     }
@@ -48,4 +63,16 @@ export class HarvesterComponent implements Component
     public state: string;
     public spawn: string;
     public source: string;
+    public roomName: string;
+}
+
+class MySource implements Source
+{
+    prototype: Source;
+    energy: number;
+    energyCapacity: number;
+    id: string;
+    ticksToRegeneration: number;
+    pos: RoomPosition;
+    room: Room;
 }

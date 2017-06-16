@@ -34,7 +34,6 @@ export class MockUberBot extends UberBot
 export class MockBot implements BotData
 {
     private pos: BotPosition;
-    //[memory: string]: any;
     private carryEnergy: number;
     private carryCapacity: number;
     private mem: object;
@@ -44,7 +43,6 @@ export class MockBot implements BotData
         if (typeof data !== "undefined")
         {
             this.pos = data.pos;
-            //this.mem = data.mem;
             this.carryEnergy = data.carryEnergy;
             this.carryCapacity = data.carryCapacity;
         }

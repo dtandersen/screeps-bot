@@ -2,6 +2,7 @@ import {World, WorldData} from "../src/entity.world";
 import {BotPosition} from "../src/entity.position";
 import {BotData, MyRoomObject, UberBot} from "../src/entity.bot";
 import {MockBot, MockUberBot} from "./mock.bot";
+import * as _ from "lodash";
 
 export class MockWorld extends World
 {
@@ -39,6 +40,11 @@ export class WorldDataStub implements WorldData
         this.env = env;
     }
 
+    getObjectById<T extends Identifiable>(id: string): T
+    {
+        return <T>_.find(this.env.sources, (o) => o.id === id);
+    }
+
     getCreep(name: string): BotData
     {
         // let botData = new MockBot();
@@ -56,7 +62,7 @@ export class WorldDataStub implements WorldData
         return this.spawn;
     }
 
-    getSpawnByName(name: string): MyRoomObject
+    getSpawnByName(name: string): Spawn
     {
         return this.env.spawns[name];
     }
@@ -71,9 +77,15 @@ export interface MyStuff
 {
     spawns: MyRoomObject[];
     creep: BotDef;
+    sources: Identifiable[];
 }
 
 interface BotDef
 {
     pos: BotPosition;
+}
+
+interface Identifiable
+{
+    id: string;
 }

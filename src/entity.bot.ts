@@ -42,6 +42,11 @@ export class UberBot
     {
         // console.log("begin getComponent");
         let components = <Component[]>this.memory("components");
+        if (typeof components === "undefined")
+        {
+            return undefined;
+        }
+
         let component = <T>components[t["name"]];
         // console.log("get component " + name + "=" + JSON.stringify(component));
         // console.log("end getComponent");
@@ -292,7 +297,7 @@ export interface BotData
     clearMemory(variable: string): void;
 }
 
-export class ScreepsBot implements BotData
+export class ScreepsBotData implements BotData
 {
     private creep: Creep;
 

@@ -8,7 +8,7 @@ export class Harvester {
 
     /**
      *
-     * @param {ScreepsBot} bot
+     * @param {ScreepsBotData} bot
      */
     process(bot) {
         if (bot.propertyUndefined("working")) {
@@ -56,7 +56,7 @@ export class Harvester {
 
     /**
      *
-     * @param {ScreepsBot} bot
+     * @param {ScreepsBotData} bot
      * @returns {*}
      */
     static working(bot) {

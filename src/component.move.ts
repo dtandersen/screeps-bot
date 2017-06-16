@@ -26,6 +26,7 @@ export class MoveComponent implements Component
 {
     public x: number;
     public y: number;
+    public roomName: string;
 
     constructor(x?: number, y?: number)
     {
