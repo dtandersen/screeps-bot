@@ -1,20 +1,21 @@
 "use strict";
 
-import {ScreepsController} from "./controller.screeps";
-import {Component, UberBot, MyRoomObject} from "./entity.bot";
-import {MoveComponent} from "./component.move";
+import {Component, UberBot} from "./entity.bot";
+import {MoveComponent} from "./system.move";
 import {World} from "./entity.world";
+import {ScreepsEntitySystem, EntityResolver} from "./engine";
 
-export class Harvester2 implements ScreepsController
+export class HarvesterEntitySystem extends ScreepsEntitySystem
 {
     private world: World;
 
     constructor(world: World)
     {
+        super(new EntityResolver(world, [HarvesterComponent]));
         this.world = world;
     }
 
-    process(bot: UberBot): void
+    processEntity(bot: UberBot): void
     {
         let harv = bot.getComponent(HarvesterComponent);
         if (harv === undefined)

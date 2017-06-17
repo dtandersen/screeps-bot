@@ -52,11 +52,12 @@ export class WorldDataStub implements WorldData
 
     getCreep(name: string): BotData
     {
-        // let botData = new MockBot();
-        // let pos = this.env.creep[name].pos;
-        // botData.setPosition(new BotPosition(pos.x, pos.y));
-
         return new MockBot(this.env.creep[name]);
+    }
+
+    getCreeps(): UberBot[]
+    {
+        throw new Error("Method not implemented.");
     }
 
     /**

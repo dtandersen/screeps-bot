@@ -1,17 +1,19 @@
 "use strict";
 
-import {BotData, Component, UberBot} from "./entity.bot";
-import {ScreepsController} from "./controller.screeps";
+import {Component, UberBot} from "./entity.bot";
+import {World} from "./entity.world";
+import {EntityResolver, ScreepsEntitySystem} from "./engine";
 
-export class Move implements ScreepsController
+export class MoveEntitySystem extends ScreepsEntitySystem
 {
-    process(bot: UberBot)
+    constructor(readonly world: World)
+    {
+        super(new EntityResolver(world, [MoveComponent]));
+    }
+
+    processEntity(bot: UberBot)
     {
         let moveComponent = bot.getComponent(MoveComponent);
-        if (moveComponent === undefined)
-        {
-            return;
-        }
 
         if (bot.isNear(moveComponent.x, moveComponent.y, 1))
         {
@@ -21,11 +23,6 @@ export class Move implements ScreepsController
         {
             bot.moveToXY(moveComponent.x, moveComponent.y);
         }
-    }
-
-    matches(bot: UberBot): boolean
-    {
-        return typeof bot.getComponent(MoveComponent) !== "undefined";
     }
 }
 

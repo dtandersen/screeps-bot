@@ -1,8 +1,7 @@
 "use strict";
 
 import {Expect, Test} from "alsatian";
-import {Move, MoveComponent} from "../src/component.move";
-import {BotPosition} from "../src/entity.position";
+import {MoveComponent} from "../src/system.move";
 import {MockBot, MockUberBot} from "./mock.bot";
 
 export class MoveTest
@@ -12,6 +11,6 @@ export class MoveTest
     {
         let bot = new MockUberBot(new MockBot());
 
-        Expect(bot.getComponent(MoveComponent)).not.toBeDefined();
+        Expect(bot.hasComponent(MoveComponent)).not.toBeTruthy();
     }
 }

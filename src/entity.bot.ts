@@ -40,16 +40,35 @@ export class UberBot
         // console.log("end addComponent");
     }
 
-    getComponent<T extends Component>(t: new() => T): T | undefined
+    hasComponent<T extends Component>(t: new() => T): boolean
+    {
+        let components = this.memory("components");
+        let name = t["name"];
+        if (typeof components === "undefined")
+        {
+            return false;
+        }
+
+        if (components[name] === undefined)
+        {
+            return false;
+        }
+
+        return true;
+    }
+
+    getComponent<T extends Component>(t: new() => T): T
     {
         // console.log("begin getComponent");
         let components = this.memory("components");
+        let name = t["name"];
         if (typeof components === "undefined")
         {
-            return undefined;
+            throw Error("has no component " + name);
+//            return undefined;
         }
 
-        let component = <T>components[t["name"]];
+        let component = <T>components[name];
         // console.log("get component " + name + "=" + JSON.stringify(component));
         // console.log("end getComponent");
         return component;

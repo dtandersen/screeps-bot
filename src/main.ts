@@ -1,30 +1,19 @@
 "use strict";
 
-import {ScreepsBotData, UberBot} from "./entity.bot";
-import {Harvester} from "./component.harvester";
-import {Spawner} from "./component.spawner";
-import {Move} from "./component.move";
-import {Harvester2} from "./component.harvester2";
+import {SpawnerSystem} from "./system.spawner";
+import {MoveEntitySystem} from "./system.move";
+import {HarvesterEntitySystem} from "./system.harvester";
 import {ScreepsWorldData, World} from "./entity.world";
+import {Engine} from "./engine";
 
 export function loop()
 {
-    let spawner = new Spawner();
-    spawner.spawn();
-
     let world = new World(new ScreepsWorldData(Game));
-    let harvester = new Harvester2(world);
-    let mover = new Move();
-    for (let name in Game.creeps)
-    {
-        let creep = Game.creeps[name];
-        let bot = new UberBot(new ScreepsBotData(creep));
 
-        harvester.process(bot);
+    let engine = new Engine();
+    engine.register(new SpawnerSystem());
+    engine.register(new HarvesterEntitySystem(world));
+    engine.register(new MoveEntitySystem(world));
 
-        if (mover.matches(bot))
-        {
-            mover.process(bot);
-        }
-    }
+    engine.run();
 }

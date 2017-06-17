@@ -1,7 +1,7 @@
 "use strict";
 
-import {BotPosition} from "./entity.position";
-import {BotData, MyRoomObject, ScreepsBotData} from "./entity.bot";
+import {BotData, MyRoomObject, ScreepsBotData, UberBot} from "./entity.bot";
+import * as _ from "lodash";
 
 export class World
 {
@@ -26,6 +26,11 @@ export class World
     {
         return this.worldData.getObjectById<T>(id);
     }
+
+    getEntities(): UberBot[]
+    {
+        return this.worldData.getCreeps();
+    }
 }
 
 interface WorldRepository
@@ -48,6 +53,7 @@ export interface WorldData
     setSpawn(spawn: MyRoomObject): void;
     getCreep(name: string): BotData;
     getObjectById<T>(id: string): T;
+    getCreeps(): UberBot[];
 }
 
 export class ScreepsWorldData implements WorldData
@@ -67,6 +73,11 @@ export class ScreepsWorldData implements WorldData
     getCreep(name: string): BotData
     {
         return new ScreepsBotData(this.game.creeps[name]);
+    }
+
+    getCreeps(): UberBot[]
+    {
+        return _.map(this.game.creeps, (creep) => new UberBot(new ScreepsBotData(creep)));
     }
 
     /**
